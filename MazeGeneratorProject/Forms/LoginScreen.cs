@@ -15,11 +15,17 @@ namespace MazeGeneratorProject.Forms {
         }
 
         private void LoginScreen_Load(object sender, EventArgs e) {
-            User.ReadUserFromFile("a");
+            
         }
 
         private void bttn_login_Click(object sender, EventArgs e) {
+            User user;
+            if (!User.ReadUserFromFile(txtbx_username.Text, out user)) {
+                MessageBox.Show("User not found");
+                return;
+            } else {
 
+            }
         }
 
         private void bttn_createAccount_Click(object sender, EventArgs e) {
