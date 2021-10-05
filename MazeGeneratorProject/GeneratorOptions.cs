@@ -11,7 +11,7 @@ namespace MazeGeneratorProject {
     }
 
     public enum Difficulty { 
-        Easiy, Medium, Hard,
+        Easy, Medium, Hard,
         Count //https://stackoverflow.com/a/16946240
     }
 }

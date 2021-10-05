@@ -12,6 +12,10 @@ namespace MazeGeneratorProject.Forms {
     public partial class LoginScreen : Form {
         public LoginScreen() {
             InitializeComponent();
+            lbl_title.Font = StyleSheet.Headings;
+            lbl_usrnm.Font = StyleSheet.Body;
+            txtbx_username.Font = StyleSheet.Body;
+            bttn_login.Font = StyleSheet.Body;
         }
 
         private void LoginScreen_Load(object sender, EventArgs e) {
@@ -19,17 +23,15 @@ namespace MazeGeneratorProject.Forms {
         }
 
         private void bttn_login_Click(object sender, EventArgs e) {
+            if (txtbx_username.Text == "") { MessageBox.Show("Enter a username!"); return; }
+
             User user;
             if (!User.ReadUserFromFile(txtbx_username.Text, out user)) {
-                MessageBox.Show("User not found");
-                return;
-            } else {
-
+                user = new User(txtbx_username.Text);
+                user.SaveToFile();
             }
+            Program.appWindow.SetActiveForm(new MainMenu(user));
         }
 
-        private void bttn_createAccount_Click(object sender, EventArgs e) {
-
-        }
     }
 }
