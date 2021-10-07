@@ -12,5 +12,7 @@ namespace MazeGeneratorProject {
         public static readonly Font Headings = new Font(FontFamily.GenericSerif, 40);
         public static readonly Font Body = new Font(FontFamily.GenericSansSerif, 12);
         //public static readonly Bitmap Backgroundimage = ;
+
+
     }
 }
