@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MazeGeneratorProject {
-    class GeneratorOptions {
+    public class GeneratorOptions {
         public enum GenerationType {Gamma, Delta, Theta}
         public GenerationType generationType;
         public Bitmap TemplateImg;
@@ -15,7 +15,9 @@ namespace MazeGeneratorProject {
         public bool MovingWalls;
         public bool ReducedVisibility;
         public bool Keys;
-        public float[] BiasStrengths;
+        public float BiasStrength;
+        public Difficulty Diff;
+        public int Size;
 
         public GeneratorOptions() {
 
@@ -31,12 +33,10 @@ namespace MazeGeneratorProject {
     public class Style {
         public Brush WallBrush;
         public Brush PassageBrush;
-        public bool carved;
 
-        public Style(Brush WallBrush, Brush PassageBrush, bool carved) {
+        public Style(Brush WallBrush, Brush PassageBrush) {
             this.WallBrush = WallBrush;
             this.PassageBrush = PassageBrush;
-            this.carved = carved;
         }
     }
 }

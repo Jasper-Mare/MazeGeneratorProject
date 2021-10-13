@@ -30,11 +30,13 @@ namespace MazeGeneratorProject.Forms
         private void InitializeComponent()
         {
             this.bttn_back = new System.Windows.Forms.Button();
-            this.bar_difficulty = new System.Windows.Forms.ProgressBar();
             this.lbl_Username = new System.Windows.Forms.Label();
             this.pnl_Options = new System.Windows.Forms.Panel();
             this.lbl_diff = new System.Windows.Forms.Label();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.openFile_TemplateImage = new System.Windows.Forms.OpenFileDialog();
+            this.bar_difficulty = new System.Windows.Forms.PictureBox();
+            this.bttn_GenMaze = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.bar_difficulty)).BeginInit();
             this.SuspendLayout();
             // 
             // bttn_back
@@ -46,16 +48,7 @@ namespace MazeGeneratorProject.Forms
             this.bttn_back.TabIndex = 0;
             this.bttn_back.Text = "Back to Main Menu";
             this.bttn_back.UseVisualStyleBackColor = true;
-            this.bttn_back.Click += new System.EventHandler(this.bttn_back_Click);
-            // 
-            // bar_difficulty
-            // 
-            this.bar_difficulty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bar_difficulty.Location = new System.Drawing.Point(538, 12);
-            this.bar_difficulty.Name = "bar_difficulty";
-            this.bar_difficulty.Size = new System.Drawing.Size(250, 23);
-            this.bar_difficulty.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.bar_difficulty.TabIndex = 1;
+            this.bttn_back.Click += new System.EventHandler(this.Bttn_back_Click);
             // 
             // lbl_Username
             // 
@@ -89,23 +82,43 @@ namespace MazeGeneratorProject.Forms
             this.lbl_diff.Text = "Difficulty: ";
             this.lbl_diff.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // openFileDialog1
+            // bar_difficulty
             // 
-            this.openFileDialog1.FileName = "openFileDialog_templateimage";
+            this.bar_difficulty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.bar_difficulty.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.bar_difficulty.Location = new System.Drawing.Point(538, 9);
+            this.bar_difficulty.Name = "bar_difficulty";
+            this.bar_difficulty.Size = new System.Drawing.Size(250, 26);
+            this.bar_difficulty.TabIndex = 5;
+            this.bar_difficulty.TabStop = false;
+            // 
+            // bttn_GenMaze
+            // 
+            this.bttn_GenMaze.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bttn_GenMaze.Location = new System.Drawing.Point(12, 352);
+            this.bttn_GenMaze.Name = "bttn_GenMaze";
+            this.bttn_GenMaze.Size = new System.Drawing.Size(303, 40);
+            this.bttn_GenMaze.TabIndex = 6;
+            this.bttn_GenMaze.Text = "Generate Maze";
+            this.bttn_GenMaze.UseVisualStyleBackColor = true;
+            this.bttn_GenMaze.Click += new System.EventHandler(this.bttn_GenMaze_Click);
             // 
             // GenerateMaze
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.bttn_GenMaze);
+            this.Controls.Add(this.bar_difficulty);
             this.Controls.Add(this.pnl_Options);
             this.Controls.Add(this.lbl_Username);
-            this.Controls.Add(this.bar_difficulty);
             this.Controls.Add(this.bttn_back);
             this.Controls.Add(this.lbl_diff);
             this.Name = "GenerateMaze";
             this.Text = "GenerateMaze";
             this.Load += new System.EventHandler(this.GenerateMaze_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.bar_difficulty)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -113,10 +126,11 @@ namespace MazeGeneratorProject.Forms
         #endregion
 
         private System.Windows.Forms.Button bttn_back;
-        private System.Windows.Forms.ProgressBar bar_difficulty;
         private System.Windows.Forms.Label lbl_Username;
         private System.Windows.Forms.Panel pnl_Options;
         private System.Windows.Forms.Label lbl_diff;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.OpenFileDialog openFile_TemplateImage;
+        private System.Windows.Forms.PictureBox bar_difficulty;
+        private System.Windows.Forms.Button bttn_GenMaze;
     }
 }
