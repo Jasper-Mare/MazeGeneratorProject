@@ -17,7 +17,7 @@ namespace MazeGeneratorProject.Forms {
         //====================================================================================//
         #region Engine Variables
         new const int Width  = 720;
-        new const int Height = 400;
+        new const int Height = 720;
 
         Bitmap image = new Bitmap(Width, Height);
         Graphics gfx;
@@ -28,13 +28,16 @@ namespace MazeGeneratorProject.Forms {
         float gfxElapsedTime = 0;
 
         InterpolationMode interpMode = InterpolationMode.NearestNeighbor;
-
         Dictionary<Keys, bool> PressedKeys = new Dictionary<Keys, bool>();
+        PointF CameraPos;
+        float cameraSpeed = 100;
         #endregion
 
         Stopwatch UserTime = new Stopwatch();
         User user;
+
         GeneratorOptions options;
+        Maze maze;
 
         public MazeForm(User user, GeneratorOptions options) {
             InitializeComponent();
@@ -42,7 +45,7 @@ namespace MazeGeneratorProject.Forms {
             this.options = options;
         }
 
-        private void MazeForm_Load(object sender, EventArgs e) {
+        private void MazeForm_Load(object sender, EventArgs e) { //runs before the form appears
             lbl_Username.Font = StyleSheet.Body;
             lbl_Username.Text = user.Name;
             lbl_timer.Font = StyleSheet.Body;
@@ -51,7 +54,6 @@ namespace MazeGeneratorProject.Forms {
             KeyDown += KeyPressed;
             KeyUp += KeyUnpressed;
 
-            Canvas.SizeMode = PictureBoxSizeMode.Zoom;
             Canvas.InterpolationMode = interpMode;
             Canvas.Image = image;
             Controls.Add(Canvas);
@@ -60,8 +62,19 @@ namespace MazeGeneratorProject.Forms {
             gfx.InterpolationMode = interpMode;
             gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
 
-            
         }
+
+        private void MazeForm_Shown(object sender, EventArgs e) { //runs after the form has loaded and appeared.
+            bttn_Start.Text = "Loading...";
+            bttn_Start.Enabled = false;
+
+            maze = new Maze();
+            maze.Generate(options);
+
+            bttn_Start.Text = "START";
+            bttn_Start.Enabled = true;
+        }
+
         private void bttn_Start_Click(object sender, EventArgs e) {
             //start the timer
             Canvas.Invalidate();
@@ -78,11 +91,58 @@ namespace MazeGeneratorProject.Forms {
             gfxElapsedTime += deltaT;
             frameTimer.Restart();
 
-            lbl_timer.Text = "Time: "+UserTime.Elapsed.ToString();
+            lbl_timer.Text = "Time: " + UserTime.Elapsed.ToString(@"hh\:mm\:ss\:f");
 
-            gfx.Clear(Color.CornflowerBlue);
+            gfx.FillRectangle(options.Appearance.WallBrush, 0,0, Width, Height);
+            gfx.ResetClip();
+            gfx.TranslateTransform(Width/2, Height/2);
+            gfx.TranslateTransform(CameraPos.X, CameraPos.Y);
+            gfx.SetClip(new Rectangle(-(int)CameraPos.X-Width/2, -(int)CameraPos.Y-Height/2, Width, Height));
+            //gfx.ScaleTransform(0.2f,0.2f);
+            //https://www.vbforums.com/showthread.php?624596-RESOLVED-Offsetting-a-HatchBrush
+            gfx.RenderingOrigin = new Point((int)CameraPos.X, (int)CameraPos.Y);
+            
+            Brush psgBrsh = options.Appearance.PassageBrush;
+            int psgW = options.Appearance.passageW;
+            Pen debugPen = new Pen(Color.FromArgb(64, Color.Lime), psgW); debugPen.EndCap = LineCap.Round; debugPen.StartCap = LineCap.Round;
 
+            int i = 0;
+            foreach (Cell c in maze.Cells) {
+                foreach (Connection conn in c.Neighbours) {
+                    if (conn.Connected) {
+                        //draw link
+                        if (0 <= conn.NeighbourIndex && conn.NeighbourIndex < maze.Cells.Length) {
+                            //gfx.DrawLine(debugPen, c.Position, maze.Cells[conn.NeighbourIndex].Position); //for debugging
+                            gfx.FillPolygon(psgBrsh, LineToPolygon(c.Position, maze.Cells[conn.NeighbourIndex].Position, psgW));
+                        }
+
+                    }
+                }
+                gfx.FillEllipse(psgBrsh, c.X-psgW/2, c.Y-psgW/2, psgW, psgW);
+
+                //gfx.DrawString(i.ToString(), StyleSheet.Body, SystemBrushes.ControlText, c.X-10, c.Y-10);
+                i++;
+            }
+            gfx.FillEllipse(Brushes.Red, maze.Cells[maze.startCell].X-psgW/2, maze.Cells[maze.startCell].Y-psgW/2, psgW, psgW);
+            gfx.FillEllipse(Brushes.Red, maze.Cells[maze.endCell  ].X-psgW/2, maze.Cells[maze.endCell  ].Y-psgW/2, psgW, psgW);
+
+            gfx.ResetTransform();
+            
             Canvas.Invalidate();
+        }
+
+        Point[] LineToPolygon(PointF p1, PointF p2, float width) {
+
+            float dx = p1.X - p2.X, dy = p1.Y-p2.Y;
+            float w = width/2;
+
+            //get angle
+            float ang = MathF.Atan2(dx,dy)+MathF.PI/2f;
+
+            return new Point[4] { new Point((int)(p1.X+(w*MathF.Sin(ang))), (int)(p1.Y+(w*MathF.Cos(ang)))),
+                                  new Point((int)(p1.X-(w*MathF.Sin(ang))), (int)(p1.Y-(w*MathF.Cos(ang)))),
+                                  new Point((int)(p2.X-(w*MathF.Sin(ang))), (int)(p2.Y-(w*MathF.Cos(ang)))),
+                                  new Point((int)(p2.X+(w*MathF.Sin(ang))), (int)(p2.Y+(w*MathF.Cos(ang))))};
         }
 
         private void UpdateLoop(object sender, EventArgs e) {
@@ -91,7 +151,10 @@ namespace MazeGeneratorProject.Forms {
             updateTimer.Restart();
             updateElapsedTime += deltaT;
 
-            
+            if (PressedKeys.ContainsKey(user.KeyUp   )) { if (PressedKeys[user.KeyUp]   ) { CameraPos.Y += deltaT*cameraSpeed; } }
+            if (PressedKeys.ContainsKey(user.KeyDown )) { if (PressedKeys[user.KeyDown] ) { CameraPos.Y -= deltaT*cameraSpeed; } }
+            if (PressedKeys.ContainsKey(user.KeyLeft )) { if (PressedKeys[user.KeyLeft] ) { CameraPos.X += deltaT*cameraSpeed; } }
+            if (PressedKeys.ContainsKey(user.KeyRight)) { if (PressedKeys[user.KeyRight]) { CameraPos.X -= deltaT*cameraSpeed; } }
 
             Updater.Enabled = true;
         }
@@ -104,7 +167,6 @@ namespace MazeGeneratorProject.Forms {
             if (!PressedKeys.ContainsKey(e.KeyCode)) { PressedKeys.Add(e.KeyCode, false); }
             else { PressedKeys[e.KeyCode] = false; }
         }
-
 
     }
 

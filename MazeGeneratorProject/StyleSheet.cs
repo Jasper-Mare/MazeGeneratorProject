@@ -15,10 +15,10 @@ namespace MazeGeneratorProject {
         //public static readonly Bitmap Backgroundimage = ;
 
         public static readonly Style[] mazestyles = {
-            //          walls           passages
-            new Style(Brushes.Black, Brushes.White),
-            new Style(new HatchBrush(HatchStyle.HorizontalBrick, Color.Beige, Color.Firebrick), Brushes.NavajoWhite),
-            new Style(new HatchBrush(HatchStyle.Shingle, Color.Maroon, Color.DarkRed), new HatchBrush(HatchStyle.Weave, Color.LightGray, Color.Gray)),
+            //        walls          passages       passage width
+            new Style(Brushes.Black, Brushes.White, 40),
+            new Style(new HatchBrush(HatchStyle.HorizontalBrick, Color.Beige, Color.Firebrick), Brushes.NavajoWhite, 40),
+            new Style(new HatchBrush(HatchStyle.Shingle, Color.Maroon, Color.DarkRed), new HatchBrush(HatchStyle.Weave, Color.LightGray, Color.Gray), 40),
 
             //https://drewnoakes.com/snippets/GdiColorChart/
         };

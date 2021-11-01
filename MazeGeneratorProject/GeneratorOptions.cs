@@ -33,10 +33,11 @@ namespace MazeGeneratorProject {
     public class Style {
         public Brush WallBrush;
         public Brush PassageBrush;
-
-        public Style(Brush WallBrush, Brush PassageBrush) {
+        public int passageW;
+        public Style(Brush WallBrush, Brush PassageBrush, int PassageWidth) {
             this.WallBrush = WallBrush;
             this.PassageBrush = PassageBrush;
+            passageW = PassageWidth;
         }
     }
 }

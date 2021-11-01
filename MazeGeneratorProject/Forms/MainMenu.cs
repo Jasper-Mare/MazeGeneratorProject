@@ -82,7 +82,7 @@ namespace MazeGeneratorProject.Forms {
         }
 
         private void bttn_generate_Click(object sender, EventArgs e) {
-            Program.appWindow.SetActiveForm(new GenerateMaze(user));
+            Program.appWindow.SetActiveForm(new MazeOptions(user));
         }
     }
 }
