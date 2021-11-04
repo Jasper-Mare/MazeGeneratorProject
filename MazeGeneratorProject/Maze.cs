@@ -227,6 +227,8 @@ namespace MazeGeneratorProject {
         public PointF Position { get; private set; }
         public Connection[] Neighbours;
 
+        public Connection[] NeighboursConnected { get { return Neighbours.Where(n => n.Connected).ToArray(); } }
+        public Connection[] NeighboursDisconnected { get { return Neighbours.Where(n => !n.Connected).ToArray(); } }
         public float X { get { return Position.X; } }
         public float Y { get { return Position.Y; } }
 

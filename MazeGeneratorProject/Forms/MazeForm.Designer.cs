@@ -33,7 +33,11 @@ namespace MazeGeneratorProject.Forms
             this.lbl_timer = new System.Windows.Forms.Label();
             this.Canvas = new MazeGeneratorProject.Forms.PixelBox();
             this.bttn_Start = new System.Windows.Forms.Button();
+            this.pnl_pausedMenu = new System.Windows.Forms.Panel();
+            this.lbl_paused = new System.Windows.Forms.Label();
+            this.bttn_GiveUp = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
+            this.pnl_pausedMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // lbl_Username
@@ -87,11 +91,44 @@ namespace MazeGeneratorProject.Forms
             this.bttn_Start.UseVisualStyleBackColor = true;
             this.bttn_Start.Click += new System.EventHandler(this.bttn_Start_Click);
             // 
+            // pnl_pausedMenu
+            // 
+            this.pnl_pausedMenu.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnl_pausedMenu.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pnl_pausedMenu.Controls.Add(this.lbl_paused);
+            this.pnl_pausedMenu.Controls.Add(this.bttn_GiveUp);
+            this.pnl_pausedMenu.Location = new System.Drawing.Point(24, 73);
+            this.pnl_pausedMenu.Name = "pnl_pausedMenu";
+            this.pnl_pausedMenu.Size = new System.Drawing.Size(751, 353);
+            this.pnl_pausedMenu.TabIndex = 8;
+            // 
+            // lbl_paused
+            // 
+            this.lbl_paused.AutoSize = true;
+            this.lbl_paused.Location = new System.Drawing.Point(3, 29);
+            this.lbl_paused.Name = "lbl_paused";
+            this.lbl_paused.Size = new System.Drawing.Size(45, 15);
+            this.lbl_paused.TabIndex = 1;
+            this.lbl_paused.Text = "Paused";
+            // 
+            // bttn_GiveUp
+            // 
+            this.bttn_GiveUp.Location = new System.Drawing.Point(3, 3);
+            this.bttn_GiveUp.Name = "bttn_GiveUp";
+            this.bttn_GiveUp.Size = new System.Drawing.Size(160, 23);
+            this.bttn_GiveUp.TabIndex = 0;
+            this.bttn_GiveUp.Text = "Give Up";
+            this.bttn_GiveUp.UseVisualStyleBackColor = true;
+            this.bttn_GiveUp.Click += new System.EventHandler(this.bttn_GiveUp_Click);
+            // 
             // MazeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.pnl_pausedMenu);
             this.Controls.Add(this.lbl_Username);
             this.Controls.Add(this.lbl_timer);
             this.Controls.Add(this.bttn_Start);
@@ -101,6 +138,8 @@ namespace MazeGeneratorProject.Forms
             this.Load += new System.EventHandler(this.MazeForm_Load);
             this.Shown += new System.EventHandler(this.MazeForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).EndInit();
+            this.pnl_pausedMenu.ResumeLayout(false);
+            this.pnl_pausedMenu.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -111,5 +150,8 @@ namespace MazeGeneratorProject.Forms
         private System.Windows.Forms.Label lbl_timer;
         private PixelBox Canvas;
         private System.Windows.Forms.Button bttn_Start;
+        private System.Windows.Forms.Panel pnl_pausedMenu;
+        private System.Windows.Forms.Label lbl_paused;
+        private System.Windows.Forms.Button bttn_GiveUp;
     }
 }
