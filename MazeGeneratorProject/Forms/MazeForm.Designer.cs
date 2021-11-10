@@ -107,7 +107,7 @@ namespace MazeGeneratorProject.Forms
             // lbl_paused
             // 
             this.lbl_paused.AutoSize = true;
-            this.lbl_paused.Location = new System.Drawing.Point(3, 29);
+            this.lbl_paused.Location = new System.Drawing.Point(-2, 0);
             this.lbl_paused.Name = "lbl_paused";
             this.lbl_paused.Size = new System.Drawing.Size(45, 15);
             this.lbl_paused.TabIndex = 1;
@@ -115,7 +115,7 @@ namespace MazeGeneratorProject.Forms
             // 
             // bttn_GiveUp
             // 
-            this.bttn_GiveUp.Location = new System.Drawing.Point(3, 3);
+            this.bttn_GiveUp.Location = new System.Drawing.Point(3, 18);
             this.bttn_GiveUp.Name = "bttn_GiveUp";
             this.bttn_GiveUp.Size = new System.Drawing.Size(160, 23);
             this.bttn_GiveUp.TabIndex = 0;

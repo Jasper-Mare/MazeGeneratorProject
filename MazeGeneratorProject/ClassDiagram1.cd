@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="MazeGeneratorProject.StyleSheet">
+    <Position X="31.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABAAAAAAAAAAQAAAABAAAAAAA=</HashCode>
+      <FileName>StyleSheet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MazeGeneratorProject.Program">
+    <Position X="7.5" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAQAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MazeGeneratorProject.Maze">
+    <Position X="23.25" Y="0.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABBAACACAAAAYAAAAIAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Maze.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MazeGeneratorProject.ApplicationWindow">
+    <Position X="7.5" Y="2.25" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>AAEAAIAhACAAABCAAACgACgCAAAEIAAAgAAAAAAAAAA=</HashCode>
+      <FileName>ApplicationWindow.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MazeGeneratorProject.Forms.BeginningForm">
+    <Position X="0.5" Y="7" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAiAAAACAAAAAAAAABAAAABAAAA=</HashCode>
+      <FileName>Forms\BeginningForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MazeGeneratorProject.Forms.LoginScreen">
+    <Position X="4.25" Y="7" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAUACAACAAAAACAAAgCAAAAAAAAAAQAAAAAAYA=</HashCode>
+      <FileName>Forms\LoginScreen.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MazeGeneratorProject.Forms.MainMenu">
+    <Position X="8" Y="7" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAgACAAgACAAACAAIACAAABACAAAAAAAAIAAQA=</HashCode>
+      <FileName>Forms\MainMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MazeGeneratorProject.Forms.MazeForm">
+    <Position X="17.5" Y="7" Width="3.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="MazeGeneratorProject.Forms.MazeForm.marker">
+        <TypeIdentifier>
+          <NewMemberFileName>Forms\MazeForm.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>gkAMACUgBSEAoACIAAqAAGCDkAAAQAEAARAAIRBAoQA=</HashCode>
+      <FileName>Forms\MazeForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MazeGeneratorProject.Forms.MazeOptions">
+    <Position X="12.75" Y="7" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAIAAgBCRgAKAAAgCKQASWAKkCCIAACEMAYABCA4A=</HashCode>
+      <FileName>Forms\MazeOptions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MazeGeneratorProject.GeneratorOptions">
+    <Position X="28.75" Y="0.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="MazeGeneratorProject.GeneratorOptions.GenerationType">
+        <TypeIdentifier>
+          <NewMemberFileName>GeneratorOptions.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAIIAgAAACAAAQAAAAAAAAAAQAAEgAAgAAAA=</HashCode>
+      <FileName>GeneratorOptions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MazeGeneratorProject.Style">
+    <Position X="30.25" Y="6.25" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQACQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GeneratorOptions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="MazeGeneratorProject.User">
+    <Position X="35.25" Y="0.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAABgAAAAgBAICIgAACQAAAAAAAIAAAAEAAAAAAA=</HashCode>
+      <FileName>User.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="MazeGeneratorProject.Cell">
+    <Position X="23.25" Y="6.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAIAAgAAAAgAAAAAAAAAAAAAAAAAAAYAA=</HashCode>
+      <FileName>Maze.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="MazeGeneratorProject.Connection">
+    <Position X="23.25" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Maze.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="MazeGeneratorProject.Difficulty">
+    <Position X="28.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAQAAAAAAAAAAAAAAAAkAAA=</HashCode>
+      <FileName>GeneratorOptions.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

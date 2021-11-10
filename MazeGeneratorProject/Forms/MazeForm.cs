@@ -65,7 +65,7 @@ namespace MazeGeneratorProject.Forms {
             Canvas.InterpolationMode = interpMode;
             Canvas.Image = image;
             Controls.Add(Canvas);
-
+            
             pnl_pausedMenu.Hide();
 
             gfx = Graphics.FromImage(image);
