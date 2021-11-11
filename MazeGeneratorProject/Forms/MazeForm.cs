@@ -64,7 +64,6 @@ namespace MazeGeneratorProject.Forms {
 
             Canvas.InterpolationMode = interpMode;
             Canvas.Image = image;
-            Controls.Add(Canvas);
             
             pnl_pausedMenu.Hide();
 
@@ -202,7 +201,7 @@ namespace MazeGeneratorProject.Forms {
             if (!PressedKeys.ContainsKey(e.KeyCode)) { PressedKeys.Add(e.KeyCode, false); }
             else { PressedKeys[e.KeyCode] = false; }
 
-            if (PressedKeys.ContainsKey(Keys.Escape)) { paused = !paused; if (paused) { UserTime.Stop(); pnl_pausedMenu.Show(); } else { UserTime.Start(); pnl_pausedMenu.Hide(); } } //toggle pause
+            if (PressedKeys.ContainsKey(Keys.Escape)) { paused = !paused; if (paused) { UserTime.Stop(); pnl_pausedMenu.Show(); } else { UserTime.Start(); pnl_pausedMenu.Hide(); } } //toggle paused
         }
 
         private void bttn_GiveUp_Click(object sender, EventArgs e) {
