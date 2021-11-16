@@ -24,13 +24,9 @@ namespace MazeGeneratorProject.Forms {
         System.Timers.Timer Updater = new System.Timers.Timer(1);
         Stopwatch updateTimer = new Stopwatch();
         Stopwatch frameTimer = new Stopwatch();
-        float updateElapsedTime = 0;
-        float gfxElapsedTime = 0;
 
         InterpolationMode interpMode = InterpolationMode.NearestNeighbor;
-        Dictionary<Keys, bool> PressedKeys = new Dictionary<Keys, bool>();
         PointF CameraPos;
-        float cameraSpeed = 100;
         #endregion
 
         Stopwatch UserTime = new Stopwatch();
@@ -43,12 +39,17 @@ namespace MazeGeneratorProject.Forms {
 
         bool paused = false;
 
+        bool KeySelectPressed = false;
+        bool KeyCWPressed = false;
+        bool KeyCCWPressed = false;
+
         struct marker {
             public static int currentCellIndex;
             public static int nextCellIndex;
             public static float proportionAlongPassage;
             public static readonly float speed = 1;
-            public static List<int> visitedIndexes = new List<int>();
+            public enum stateType { waiting, moving }
+            public static stateType State = stateType.waiting;
         }
 
         public MazeForm(User user, GeneratorOptions options) {
@@ -105,7 +106,6 @@ namespace MazeGeneratorProject.Forms {
 
         private void Canvas_Paint(object sender, PaintEventArgs e) {
             float deltaT = frameTimer.ElapsedMilliseconds / 1000f;
-            gfxElapsedTime += deltaT;
             frameTimer.Restart();
             
             if (paused) {
@@ -118,7 +118,7 @@ namespace MazeGeneratorProject.Forms {
                 gfx.TranslateTransform(Width/2, Height/2);
                 gfx.TranslateTransform(-CameraPos.X, -CameraPos.Y);
                 gfx.SetClip(new Rectangle((int)CameraPos.X-Width/2, (int)CameraPos.Y-Height/2, Width, Height));
-                //gfx.ScaleTransform(0.2f,0.2f);
+                //gfx.ScaleTransform(0.5f,0.5f);
                 //https://www.vbforums.com/showthread.php?624596-RESOLVED-Offsetting-a-HatchBrush
                 gfx.RenderingOrigin = new Point((int)CameraPos.X, (int)CameraPos.Y);
                 
@@ -140,7 +140,7 @@ namespace MazeGeneratorProject.Forms {
                     }
                     gfx.FillEllipse(psgBrsh, c.X-psgW/2, c.Y-psgW/2, psgW, psgW);
 
-                    //gfx.DrawString(i.ToString(), StyleSheet.Body, SystemBrushes.ControlText, c.X-10, c.Y-10);
+                    gfx.DrawString(i.ToString(), StyleSheet.Body, SystemBrushes.ControlText, c.X-10, c.Y-10);
                     i++;
                 }
                 gfx.FillEllipse(Brushes.Red, maze.Cells[maze.startCell].X-psgW/2, maze.Cells[maze.startCell].Y-psgW/2, psgW, psgW);
@@ -175,33 +175,24 @@ namespace MazeGeneratorProject.Forms {
             Updater.Enabled = false;
             float deltaT = paused? 0 : updateTimer.ElapsedMilliseconds / 1000f;
             updateTimer.Restart();
-            updateElapsedTime += deltaT;
 
             marker.proportionAlongPassage += deltaT*marker.speed;
             if (marker.proportionAlongPassage >= 1) {
                 marker.proportionAlongPassage = 0;
-                marker.visitedIndexes.Add(marker.currentCellIndex);
                 marker.currentCellIndex = marker.nextCellIndex;
-
-                marker.nextCellIndex = rng.Next(maze.Cells.Length);
             }
 
             if (marker.currentCellIndex == maze.endCell) { MazeDone(false); return; } //maze is solved, so leave this function before it is re-enabled
-
-            //if (PressedKeys.ContainsKey(key)) { if (PressedKeys[key]) { paused = !paused; } } 
-
+            
+            
             Updater.Enabled = true;
         }
 
         private void KeyPressed(object sender, KeyEventArgs e) {
-            if (!PressedKeys.ContainsKey(e.KeyCode)) { PressedKeys.Add(e.KeyCode, true); }
-            else { PressedKeys[e.KeyCode] = true; }
+            
         }
         private void KeyUnpressed(object sender, KeyEventArgs e) {
-            if (!PressedKeys.ContainsKey(e.KeyCode)) { PressedKeys.Add(e.KeyCode, false); }
-            else { PressedKeys[e.KeyCode] = false; }
-
-            if (PressedKeys.ContainsKey(Keys.Escape)) { paused = !paused; if (paused) { UserTime.Stop(); pnl_pausedMenu.Show(); } else { UserTime.Start(); pnl_pausedMenu.Hide(); } } //toggle paused
+            if (e.KeyCode == Keys.Escape) { paused = !paused; if (paused) { UserTime.Stop(); pnl_pausedMenu.Show(); } else { UserTime.Start(); pnl_pausedMenu.Hide(); } } //toggle paused
         }
 
         private void bttn_GiveUp_Click(object sender, EventArgs e) {

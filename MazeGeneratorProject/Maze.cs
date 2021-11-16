@@ -69,10 +69,10 @@ namespace MazeGeneratorProject {
                 if (cell2Index == -1) { throw new Exception("Cell2 not found."); }
                 Cell cell2 = Cells[cell2Index], cell1 = Cells[cell1Index];
                 for (int i = 0; i < cell1.Neighbours.Length; i++) {
-                    if (cell1.Neighbours[i].NeighbourIndex == cell2Index) { cell1.Neighbours[i].Connected = true; }
+                    if (cell1.Neighbours[i].NeighbourIndex == cell2Index) { cell1.Neighbours[i].Connected = true; break; }
                 }
                 for (int i = 0; i < cell2.Neighbours.Length; i++) {
-                    if (cell2.Neighbours[i].NeighbourIndex == cell1Index) { cell2.Neighbours[i].Connected = true; }
+                    if (cell2.Neighbours[i].NeighbourIndex == cell1Index) { cell2.Neighbours[i].Connected = true; break; }
                 }
 
                 //find the group cell2 belongs to
@@ -117,7 +117,7 @@ namespace MazeGeneratorProject {
 
             return vertices.ToArray();
         }
-        private Cell[] createDeltaMesh(int Size, float spaceing) { //triangle
+        private Cell[] createDeltaMesh(int Size, float spaceing) { //triangular
             List<Cell> vertices = new List<Cell>();
             int numNodes = (int)(0.5f*Size*(Size+1));
 
@@ -170,8 +170,7 @@ namespace MazeGeneratorProject {
             int outerRadius = (int)((numInOuterCircle*spaceing)/(2*MathF.PI));
             for (int r = 1; r <= Size; r++) {
                 int numInCircle = (int)MathF.Pow(2, r-1)*startingcells;
-                float drawRadius = (numInCircle*spaceing)/(2*MathF.PI);
-                drawRadius = outerRadius*((float)r/Size);
+                float drawRadius = outerRadius*((float)r/Size);
                 for (int proportion = 0; proportion < numInCircle; proportion++) {
                     float theta = (2*MathF.PI)*((float)proportion/numInCircle);
 
@@ -207,7 +206,8 @@ namespace MazeGeneratorProject {
             }
             
             startCell = vertices.Count-(int)(numInOuterCircle*0.5f);
-            endCell = vertices.Count-numInOuterCircle;
+            Random rng = new Random();
+            endCell = rng.Next(0,startingcells);
 
             return vertices.ToArray();
         }
@@ -217,9 +217,53 @@ namespace MazeGeneratorProject {
         /// Finds a solution to the maze
         /// </summary>
         /// <returns> A list of indexes showing the route taken between the start and end. </returns>
-        public int[] Solve() { 
-            
-            return new int[]{};
+        public int[] Solve() {
+            List<Path> Paths = new List<Path>();
+
+            if (endCell < 0 || endCell > Cells.Length-1 || startCell < 0 || startCell > Cells.Length-1) { throw new Exception("Start/end cell is outside of maze."); }
+
+            Paths.Add(new Path());
+            Paths[0].Add(startCell);
+
+            int loops = 0;
+            while (Paths.Count > 0) {
+                List<Path> pathsToAdd = new List<Path>();
+                List<Path> pathsToRemove = new List<Path>();
+                int pathIndex = -1;
+                foreach (Path p in Paths.ToList()) { //https://stackoverflow.com/a/604843
+                    pathIndex++;
+
+                    if (p.Contains(endCell)) { return p.ToArray(); }
+
+                    int lastCell = (p.Count >= 2)? p[p.Count-2] : -1;
+                    Connection[] nextConnections = Cells[p[p.Count - 1]].NeighboursConnected.Where(n => n.NeighbourIndex != lastCell).ToArray();
+
+                    if (nextConnections.Length == 0) {
+                        pathsToRemove.Add(p);
+                    } else if (nextConnections.Length == 1) {
+                        p.Add(nextConnections[0].NeighbourIndex);
+                    } else { 
+                        for (int i = 0; i < nextConnections.Length-1; i++) {
+                            Path newPassage = new Path(p.ToList());
+                            newPassage.Add(nextConnections[i].NeighbourIndex);
+                            pathsToAdd.Add(newPassage);
+                        }
+                        p.Add(nextConnections[nextConnections.Length-1].NeighbourIndex);
+                    }
+
+                }
+
+                foreach (Path p in pathsToRemove) {
+                    Paths.Remove(p);
+                }
+                Paths.AddRange(pathsToAdd);
+                loops++;
+            }
+            throw new Exception("route not found");
+        }
+        private class Path : List<int> {
+            public Path() : base() { }
+            public Path(List<int> list) { base.AddRange(list); }
         }
     }
 

@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Mazetmp.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Forms\MainMenu.cs~RF108a6f.TMP" />
   </ItemGroup>
 
