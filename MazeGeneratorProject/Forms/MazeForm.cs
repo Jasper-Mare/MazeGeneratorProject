@@ -52,6 +52,8 @@ namespace MazeGeneratorProject.Forms {
             public static stateType State = stateType.waiting;
         }
 
+        int selectedDirection;
+
         public MazeForm(User user, GeneratorOptions options) {
             InitializeComponent();
             this.user = user;
@@ -113,6 +115,13 @@ namespace MazeGeneratorProject.Forms {
             } else {
                 lbl_timer.Text = "Time: " + UserTime.Elapsed.ToString(@"hh\:mm\:ss\:f");
 
+                Brush psgBrsh = options.Appearance.PassageBrush;
+                int psgW = options.Appearance.passageW;
+                Pen debugPen = new Pen(Color.FromArgb(64, Color.Lime), psgW); debugPen.EndCap = LineCap.Round; debugPen.StartCap = LineCap.Round;
+
+                Point markerPos = new Point((int)(maze.Cells[marker.currentCellIndex].X + (maze.Cells[marker.nextCellIndex].X - maze.Cells[marker.currentCellIndex].X) * marker.proportionAlongPassage - psgW / 2), (int)(maze.Cells[marker.currentCellIndex].Y + (maze.Cells[marker.nextCellIndex].Y - maze.Cells[marker.currentCellIndex].Y) * marker.proportionAlongPassage - psgW / 2));
+                CameraPos = markerPos;
+
                 gfx.FillRectangle(options.Appearance.WallBrush, 0,0, Width, Height);
                 gfx.ResetClip();
                 gfx.TranslateTransform(Width/2, Height/2);
@@ -122,10 +131,6 @@ namespace MazeGeneratorProject.Forms {
                 //https://www.vbforums.com/showthread.php?624596-RESOLVED-Offsetting-a-HatchBrush
                 gfx.RenderingOrigin = new Point((int)CameraPos.X, (int)CameraPos.Y);
                 
-                Brush psgBrsh = options.Appearance.PassageBrush;
-                int psgW = options.Appearance.passageW;
-                Pen debugPen = new Pen(Color.FromArgb(64, Color.Lime), psgW); debugPen.EndCap = LineCap.Round; debugPen.StartCap = LineCap.Round;
-
                 int i = 0;
                 foreach (Cell c in maze.Cells) {
                     foreach (Connection conn in c.Neighbours) {
@@ -146,10 +151,15 @@ namespace MazeGeneratorProject.Forms {
                 gfx.FillEllipse(Brushes.Red, maze.Cells[maze.startCell].X-psgW/2, maze.Cells[maze.startCell].Y-psgW/2, psgW, psgW);
                 gfx.FillEllipse(Brushes.Red, maze.Cells[maze.endCell  ].X-psgW/2, maze.Cells[maze.endCell  ].Y-psgW/2, psgW, psgW);
 
-                Point markerPos = new Point((int)(maze.Cells[marker.currentCellIndex].X+(maze.Cells[marker.nextCellIndex].X-maze.Cells[marker.currentCellIndex].X)*marker.proportionAlongPassage-psgW/2), (int)(maze.Cells[marker.currentCellIndex].Y+(maze.Cells[marker.nextCellIndex].Y-maze.Cells[marker.currentCellIndex].Y)*marker.proportionAlongPassage-psgW/2));
-                CameraPos = markerPos;
-
+                //draw marker
                 gfx.FillEllipse(Brushes.Green, markerPos.X, markerPos.Y, psgW, psgW);
+                if (marker.State == marker.stateType.waiting) {
+                    Pen p = new Pen(Color.Yellow, 5);
+                    AdjustableArrowCap arrowCap = new AdjustableArrowCap(5,5);
+                    p.CustomEndCap = arrowCap;
+                    p.StartCap = LineCap.Flat;
+                    gfx.DrawLine(p, maze.Cells[marker.currentCellIndex].Position, maze.Cells[maze.Cells[marker.currentCellIndex].NeighboursConnected[selectedDirection].NeighbourIndex].Position);
+                }
 
                 gfx.ResetTransform();
             }
@@ -176,22 +186,50 @@ namespace MazeGeneratorProject.Forms {
             float deltaT = paused? 0 : updateTimer.ElapsedMilliseconds / 1000f;
             updateTimer.Restart();
 
-            marker.proportionAlongPassage += deltaT*marker.speed;
-            if (marker.proportionAlongPassage >= 1) {
-                marker.proportionAlongPassage = 0;
-                marker.currentCellIndex = marker.nextCellIndex;
-            }
-
+            //marker movement
+            if (marker.State == marker.stateType.moving) { marker.proportionAlongPassage += deltaT*marker.speed; }
             if (marker.currentCellIndex == maze.endCell) { MazeDone(false); return; } //maze is solved, so leave this function before it is re-enabled
             
+            if (marker.proportionAlongPassage >= 1) {
+                marker.proportionAlongPassage = 0;
+                int lastCellIndex = marker.currentCellIndex;
+                marker.currentCellIndex = marker.nextCellIndex;
+
+                Connection[] nextConnections = maze.Cells[marker.currentCellIndex].NeighboursConnected.Where(n => n.NeighbourIndex != lastCellIndex).ToArray();
+                if (nextConnections.Length == 1) { //passage
+                    marker.nextCellIndex = nextConnections[0].NeighbourIndex;
+                } else { //dead end or junction
+                    marker.State = marker.stateType.waiting;
+                }
+            }
+
+            if (marker.State == marker.stateType.waiting) {
+                int numDir = maze.Cells[marker.currentCellIndex].NeighboursConnected.Length;
+                if (KeySelectPressed) {
+                    marker.nextCellIndex = maze.Cells[marker.currentCellIndex].NeighboursConnected[selectedDirection].NeighbourIndex;
+                    marker.State = marker.stateType.moving;
+                    KeySelectPressed = false;
+                    selectedDirection = 0;
+                }
+                if (KeyCWPressed) { //index+
+                    selectedDirection = (selectedDirection+numDir+1)%numDir;
+                    KeyCWPressed = false;
+                }
+                if (KeyCCWPressed) { //index-
+                    selectedDirection = (selectedDirection+numDir-1)%numDir;
+                    KeyCCWPressed = false;
+                }
+            }
             
             Updater.Enabled = true;
         }
 
         private void KeyPressed(object sender, KeyEventArgs e) {
-            
+            if (e.KeyCode == user.KeyCW    ) { KeyCWPressed = true; }
+            if (e.KeyCode == user.KeyCCW   ) { KeyCCWPressed = true; }
         }
         private void KeyUnpressed(object sender, KeyEventArgs e) {
+            if (e.KeyCode == user.KeySelect) { KeySelectPressed = true; }
             if (e.KeyCode == Keys.Escape) { paused = !paused; if (paused) { UserTime.Stop(); pnl_pausedMenu.Show(); } else { UserTime.Start(); pnl_pausedMenu.Hide(); } } //toggle paused
         }
 

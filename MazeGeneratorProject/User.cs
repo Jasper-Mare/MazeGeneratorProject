@@ -12,10 +12,9 @@ namespace MazeGeneratorProject {
         public int Id;
         public string Name;
         public List<float>[] Times;
-        public Keys KeyUp;
-        public Keys KeyDown;
-        public Keys KeyLeft;
-        public Keys KeyRight;
+        public Keys KeySelect;
+        public Keys KeyCCW;
+        public Keys KeyCW;
         
         public User(string name, int id = -1) {
             Name = name;
@@ -32,10 +31,9 @@ namespace MazeGeneratorProject {
                     Id = int.Parse(file[file.Length-1].Split(',')[0])+1; //id, name
                 }
             }
-            KeyUp = Keys.W;
-            KeyDown = Keys.S;
-            KeyLeft = Keys.A;
-            KeyRight = Keys.D;
+            KeySelect = Keys.W;
+            KeyCCW = Keys.Q;
+            KeyCW = Keys.E;
         }
         private static string[] readFile(string address) {
              string[] file = new string[0];
