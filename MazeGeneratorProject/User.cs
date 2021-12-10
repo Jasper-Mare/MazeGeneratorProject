@@ -7,8 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 namespace MazeGeneratorProject {
     public struct User {
-        const string UsersFileLoc = "Database//Users.txt";
-        const string TimesFileLoc = "Database//Times.txt";
+        const string UsersFileLoc = @"Database/Users.txt";
+        const string TimesFileLoc = @"Database/Times.txt";
         public int Id;
         public string Name;
         public List<float>[] Times;
@@ -31,12 +31,12 @@ namespace MazeGeneratorProject {
                     Id = int.Parse(file[file.Length-1].Split(',')[0])+1; //id, name
                 }
             }
-            KeySelect = Keys.W;
             KeyCCW = Keys.Q;
+            KeySelect = Keys.W;
             KeyCW = Keys.E;
         }
         private static string[] readFile(string address) {
-             string[] file = new string[0];
+            string[] file = new string[0];
             try {
                 file = File.ReadAllLines(address);
             } catch (Exception ex) {
@@ -48,7 +48,7 @@ namespace MazeGeneratorProject {
         }
         public void GetTimesFromFile() {
             string[] file = readFile(AppDomain.CurrentDomain.BaseDirectory + TimesFileLoc); //https://stackoverflow.com/a/6041505
-                        foreach (string str in file) {
+            foreach (string str in file) {
                 string[] line = str.Split(','); //id, difficulty, time
                 if (line[0] == Id.ToString()) {
                     Times[int.Parse(line[1])].Add(float.Parse(line[2]));
@@ -59,14 +59,18 @@ namespace MazeGeneratorProject {
             user = new User("");
             string[] file = readFile(AppDomain.CurrentDomain.BaseDirectory + UsersFileLoc); //https://stackoverflow.com/a/6041505
             if (file.Length == 0) { return false; }
-                        bool foundUser = false;
+            bool foundUser = false;
             foreach (string str in file) {
-                string[] line = str.Split(','); //id, name
+                string[] line = str.Split(','); //id, name, key ccw, key select, key cw
                 if (line[1].ToUpper() == name.ToUpper()) {
                     foundUser = true;
                     user.Id = int.Parse(line[0]);
                     user.Name = line[1];
                     user.GetTimesFromFile();
+                    //https://stackoverflow.com/a/19077881
+                    user.KeyCCW = (Keys)Enum.Parse(typeof(Keys), line[2]);
+                    user.KeySelect = (Keys)Enum.Parse(typeof(Keys), line[3]);
+                    user.KeyCW = (Keys)Enum.Parse(typeof(Keys), line[4]);
                     break;
                 }
             }
@@ -78,12 +82,16 @@ namespace MazeGeneratorProject {
             if (file.Length == 0) { return false; }
             bool foundUser = false;
             foreach (string str in file) {
-                string[] line = str.Split(','); //id, name
+                string[] line = str.Split(','); //id, name, key ccw, key select, key cw
                 if (line[0] == id.ToString()) {
                     foundUser = true;
                     user.Id = int.Parse(line[0]);
                     user.Name = line[1];
                     user.GetTimesFromFile();
+                    //https://stackoverflow.com/a/19077881
+                    user.KeyCCW = (Keys)Enum.Parse(typeof(Keys), line[2]);
+                    user.KeySelect = (Keys)Enum.Parse(typeof(Keys), line[3]);
+                    user.KeyCW = (Keys)Enum.Parse(typeof(Keys), line[4]);
                     break;
                 }
             }
@@ -95,18 +103,23 @@ namespace MazeGeneratorProject {
             if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + UsersFileLoc)) {
                 string[] file = readFile(AppDomain.CurrentDomain.BaseDirectory + UsersFileLoc); //https://stackoverflow.com/a/6041505
                 bool foundUser = false;
+                int i = 0;
                 foreach (string str in file) {
                     string[] line = str.Split(','); //id, name
                     if (line[0] == Id.ToString()) {
                         foundUser = true;
+                        file[i] = Id.ToString()+","+Name+","+KeyCCW+","+KeySelect+","+KeyCW; //overwrite user in case keys changed
                         break;
                     }
+                    i++;
                 }
                 if (!foundUser) {
-                    File.AppendAllTextAsync(AppDomain.CurrentDomain.BaseDirectory + UsersFileLoc, "\n"+Id.ToString()+","+Name);
+                    File.AppendAllTextAsync(AppDomain.CurrentDomain.BaseDirectory + UsersFileLoc, "\n"+Id.ToString()+","+Name+","+KeyCCW+","+KeySelect+","+KeyCW);
+                } else {
+                    File.WriteAllLinesAsync(AppDomain.CurrentDomain.BaseDirectory + UsersFileLoc, file);
                 }
             } else {
-                 File.AppendAllTextAsync(AppDomain.CurrentDomain.BaseDirectory + UsersFileLoc, Id.ToString()+","+Name);
+                 File.AppendAllTextAsync(AppDomain.CurrentDomain.BaseDirectory + UsersFileLoc, Id.ToString()+","+Name+","+KeyCCW+","+KeySelect+","+KeyCW);
             }
             //save to times.txt
             if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + TimesFileLoc)) {

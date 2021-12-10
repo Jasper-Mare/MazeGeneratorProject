@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MazeGeneratorProject {
     class Maze {
         public int startCell, endCell;
         public Cell [] Cells;
+        public int[] keys;
 
         //==generate==generate==generate==generate==
         public void Generate(GeneratorOptions options) {
+            Random rng = new Random();
             switch (options.generationType) {
                 case GeneratorOptions.GenerationType.Gamma:
                     Cells = createGammaMesh(options.Size, options.Appearance.passageW*2);
@@ -33,7 +33,6 @@ namespace MazeGeneratorProject {
             }
 
             while (groups.Count > 1) {
-                Random rng = new Random();
                 //pick a group
                 //pick a cell
                 //pick a neighbour
@@ -50,7 +49,20 @@ namespace MazeGeneratorProject {
                     Cell cell1TMP = Cells[cell1Index];
 
                     //pick a neighbour
-                    int checkoffset = rng.Next(cell1TMP.Neighbours.Length);
+                    //bias
+                    int checkoffset;
+                    if (options.BiasStrength != 1) {
+                        if (options.BiasStrength < 1) { //biased early
+                            if (rng.Next(0, (int)(1 / options.BiasStrength)) == 0) { checkoffset = 0; }
+                            else { checkoffset = cell1TMP.Neighbours.Length/2; }
+                        } else { //biased late
+                            if (rng.Next(0, (int)(options.BiasStrength)) == 0) { checkoffset = cell1TMP.Neighbours.Length/2; }
+                            else { checkoffset = 0; }
+                        }
+                    } else {
+                        checkoffset = rng.Next(cell1TMP.Neighbours.Length);
+                    }
+
                     for (int i = 0; i < cell1TMP.Neighbours.Length; i++) {
                         cell2Index = cell1TMP.Neighbours[(i+checkoffset)%cell1TMP.Neighbours.Length].NeighbourIndex;
 
@@ -86,6 +98,17 @@ namespace MazeGeneratorProject {
                 groups.RemoveAt(group2Index); //remove group2
             }
 
+            if (options.Keys) {
+                keys = new int[options.Size/10];
+                for (int i = 0; i < keys.Length; i++) {
+                    int val = rng.Next(0, Cells.Length);
+                    while (keys.Contains(val) || val == startCell || val == endCell) {
+                        val = rng.Next(0, Cells.Length);
+                    }
+                    keys[i] = val;
+                }
+            }
+
         }
 
         private Cell[] createGammaMesh(int Size, float spaceing) { //square
@@ -103,11 +126,12 @@ namespace MazeGeneratorProject {
                 PointF pos = new PointF(x*spaceing, y*spaceing);
 
                 List<Connection> neighbours = new List<Connection>();
-                if (x != 0)       { neighbours.Add(new Connection((x-1)+(y*mazeW), false)); }
-                if (x != mazeW-1) { neighbours.Add(new Connection((x+1)+(y*mazeW), false)); }
-
+                //connect neighbours in a clockwise order (top,right,bottom,left)
                 if (y != 0)       { neighbours.Add(new Connection(x+((y-1)*mazeW), false)); }
+                if (x != mazeW-1) { neighbours.Add(new Connection((x+1)+(y*mazeW), false)); }
                 if (y != mazeH-1) { neighbours.Add(new Connection(x+((y+1)*mazeW), false)); }
+                if (x != 0)       { neighbours.Add(new Connection((x-1)+(y*mazeW), false)); }
+
 
                 vertices.Add(new Cell(pos, neighbours.ToArray()));
             }
@@ -124,21 +148,22 @@ namespace MazeGeneratorProject {
             int rowNumb = 0, colNumb = 0;
             for (int i = 0; i < numNodes; i++) {
                 PointF pos = new PointF( (colNumb+(0.5f*(Size-rowNumb))-Size*0.5f)*spaceing, rowNumb*spaceing );
-                
-                List<Connection> neighbours = new List<Connection>();
+
+                Connection[] neighbours = new Connection[6];
                 if (colNumb < rowNumb) {
-                    neighbours.Add(new Connection(i+1, false)); //right
-                    neighbours.Add(new Connection(i-rowNumb, false)); //top-right
+                    neighbours[1] = new Connection(i+1, false); //right
+                    neighbours[0] = new Connection(i-rowNumb, false); //top-right
                 }
                 if (rowNumb < Size-1) {
-                    neighbours.Add(new Connection(i+rowNumb+1, false)); //bottom-left
-                    neighbours.Add(new Connection(i+rowNumb+2, false)); //bottom-right
+                    neighbours[3] = new Connection(i+rowNumb+1, false); //bottom-left
+                    neighbours[2] = new Connection(i+rowNumb+2, false); //bottom-right
                 }
                 if (colNumb > 0) {
-                    neighbours.Add(new Connection(i-1, false)); //left
-                    neighbours.Add(new Connection(i-rowNumb-1, false)); //top-left
+                    neighbours[4] = new Connection(i-1, false); //left
+                    neighbours[5] = new Connection(i-rowNumb-1, false); //top-left
                 }
-                vertices.Add(new Cell(pos, neighbours.ToArray()));
+                //connect neighbours in a clockwise order
+                vertices.Add(new Cell(pos, neighbours.Where(c => c.setup).ToArray()));
 
                 colNumb++;
                 if (colNumb > rowNumb) { colNumb = 0; rowNumb++; }
@@ -172,36 +197,37 @@ namespace MazeGeneratorProject {
                 int numInCircle = (int)MathF.Pow(2, r-1)*startingcells;
                 float drawRadius = outerRadius*((float)r/Size);
                 for (int proportion = 0; proportion < numInCircle; proportion++) {
-                    float theta = (2*MathF.PI)*((float)proportion/numInCircle);
+                    float angle = (2*MathF.PI)*((float)proportion/numInCircle);
 
-                    List<Connection> neighbours = new List<Connection>();
-                    PointF pos = new PointF(drawRadius*MathF.Sin(theta), drawRadius*MathF.Cos(theta));
+                    Connection[] neighbours = new Connection[5];
+                    PointF pos = new PointF(drawRadius*MathF.Sin(angle), drawRadius*MathF.Cos(angle));
 
                     //add neighbour ccw
                     if (proportion == numInCircle-1) {
-                        neighbours.Add(new Connection(i-proportion, false));
+                        neighbours[0] = new Connection(i-proportion, false);
                     } else {
-                        neighbours.Add(new Connection(i+1, false));
+                        neighbours[0] = new Connection(i+1, false);
                     }
                     //add neighbour cw
                     if (proportion == 0) {
-                        neighbours.Add(new Connection(i+(numInCircle)-1, false));
+                        neighbours[3] = new Connection(i+(numInCircle)-1, false);
                     } else {
-                        neighbours.Add(new Connection(i-1, false));
+                        neighbours[3] = new Connection(i-1, false);
                     }
 
                     //add cell below
                     if ( r != 1 ) {
-                        neighbours.Add(new Connection(i-proportion-numInCircle/2+proportion/2, false));
+                        neighbours[4] = new Connection(i-proportion-numInCircle/2+proportion/2, false);
                     }
                     //add the 2 cells above
                     if (r != Size ) {
-                        neighbours.Add(new Connection(i-proportion+numInCircle+proportion*2, false));
-                        neighbours.Add(new Connection(i-proportion+numInCircle+proportion*2+1, false));
+                        neighbours[1] = new Connection(i-proportion+numInCircle+proportion*2, false);
+                        neighbours[2] = new Connection(i-proportion+numInCircle+proportion*2+1, false);
                     }
 
                     i++;
-                    vertices.Add(new Cell(pos, neighbours.ToArray()));
+                    //connect neighbours in a clockwise order
+                    vertices.Add(new Cell(pos, neighbours.Where(c => c.setup).ToArray()));
                 }
             }
             
@@ -229,9 +255,7 @@ namespace MazeGeneratorProject {
             while (Paths.Count > 0) {
                 List<Path> pathsToAdd = new List<Path>();
                 List<Path> pathsToRemove = new List<Path>();
-                int pathIndex = -1;
                 foreach (Path p in Paths.ToList()) { //https://stackoverflow.com/a/604843
-                    pathIndex++;
 
                     if (p.Contains(endCell)) { return p.ToArray(); }
 
@@ -268,7 +292,7 @@ namespace MazeGeneratorProject {
     }
 
     struct Cell {
-        public PointF Position { get; private set; }
+        public PointF Position { get; set; }
         public Connection[] Neighbours;
 
         public Connection[] NeighboursConnected { get { return Neighbours.Where(n => n.Connected).ToArray(); } }
@@ -285,10 +309,14 @@ namespace MazeGeneratorProject {
     struct Connection {
         public readonly int NeighbourIndex;
         public bool Connected;
+        public bool setup;
+        public bool hidden;
 
         public Connection(int index, bool connected) {
             NeighbourIndex = index;
             Connected = connected;
+            setup = true;
+            hidden = false;
         }
     }
 }

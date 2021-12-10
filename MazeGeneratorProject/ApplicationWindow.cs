@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace MazeGeneratorProject {
     public partial class ApplicationWindow : Form {
-        public Form DisplayedForm;
+        private Form DisplayedForm;
         private Form startForm;
         private int titleHeight;
 
@@ -18,7 +18,7 @@ namespace MazeGeneratorProject {
             SetActiveForm(startForm);
         }
         public void SetActiveForm(Form displayedForm) {
-            if (DisplayedForm != null) { DisplayedForm.Close(); }
+            if (DisplayedForm != null) { DisplayedForm.Close(); DisplayedForm.Dispose(); }
             DisplayedForm = displayedForm;
             Rectangle screenRectangle = this.RectangleToScreen(this.ClientRectangle); //https://stackoverflow.com/a/2022684
             titleHeight = screenRectangle.Top - this.Top;
@@ -56,6 +56,6 @@ namespace MazeGeneratorProject {
 
         private void ApplicationWindow_Activated(object sender, EventArgs e) {  }
         private void DisplayedForm_Activated(object sender, EventArgs e) {  }
-
     }
+
 }

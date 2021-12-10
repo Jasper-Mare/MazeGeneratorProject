@@ -41,7 +41,7 @@ namespace MazeGeneratorProject.Forms {
 
         private void tbctl_Graphs_Selected(object sender, TabControlEventArgs e) {
             PictureBox picbox = (PictureBox)e.TabPage.Controls[0];
-
+            
             const int W = 1600, H = 900;
             if (picbox.Image == null) { picbox.Image = new Bitmap(W, H); }
             Graphics gfx = Graphics.FromImage(picbox.Image);

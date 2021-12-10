@@ -126,7 +126,7 @@ namespace MazeGeneratorProject.Forms {
             drpdwn_Style.DropDownStyle = ComboBoxStyle.DropDownList;
             drpdwn_Style.Size = new Size(controllWidths, drpdwn_Style.Size.Height);
             drpdwn_Style.ItemHeight *= 2;
-            foreach (Style s in StyleSheet.mazestyles) { drpdwn_Style.Items.Add(s); }
+            foreach (Style s in StyleSheet.mazeStyles) { drpdwn_Style.Items.Add(s); }
             drpdwn_Style.SelectedIndex = 0;
             drpdwn_Style.DrawMode = DrawMode.OwnerDrawVariable;
             drpdwn_Style.DrawItem += Drpdwn_Style_DrawItem;
@@ -219,15 +219,15 @@ namespace MazeGeneratorProject.Forms {
         private void Drpdwn_Style_DrawItem(object sender, DrawItemEventArgs e) {
             //https://www.c-sharpcorner.com/UploadFile/renuka11/using-a-combobox-to-select-colors/
             //draw colours
-            Graphics g = e.Graphics;
+            Graphics gfx = e.Graphics;
             Rectangle rect = e.Bounds;
             if (e.Index >= 0) {
                 Style selected = (Style)(((ComboBox)sender).Items[e.Index]);
                 Brush b1 = selected.WallBrush;
                 Brush b2 = selected.PassageBrush;
-                g.FillRectangle(SystemBrushes.ControlDark, rect);
-                g.FillRectangle(b1, rect.X+1, rect.Y+1, rect.Width/2, rect.Height-2);
-                g.FillRectangle(b2, rect.X+rect.Width/2, rect.Y+1, rect.Width/2-1, rect.Height-2);
+                gfx.FillRectangle(SystemBrushes.ControlDark, rect);
+                gfx.FillRectangle(b1, rect.X+1, rect.Y+1, rect.Width/2, rect.Height-2);
+                gfx.FillRectangle(b2, rect.X+rect.Width/2, rect.Y+1, rect.Width/2-1, rect.Height-2);
             }
         }
         private void Bttn_ChooseTemplate_Click(object sender, EventArgs e) {

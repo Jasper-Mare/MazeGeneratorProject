@@ -34,10 +34,13 @@ namespace MazeGeneratorProject.Forms
             this.Canvas = new MazeGeneratorProject.Forms.PixelBox();
             this.bttn_Start = new System.Windows.Forms.Button();
             this.pnl_pausedMenu = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.lbl_paused = new System.Windows.Forms.Label();
             this.bttn_GiveUp = new System.Windows.Forms.Button();
+            this.bttn_return = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
             this.pnl_pausedMenu.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // lbl_Username
@@ -97,37 +100,65 @@ namespace MazeGeneratorProject.Forms
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnl_pausedMenu.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pnl_pausedMenu.Controls.Add(this.lbl_paused);
-            this.pnl_pausedMenu.Controls.Add(this.bttn_GiveUp);
+            this.pnl_pausedMenu.Controls.Add(this.tableLayoutPanel1);
             this.pnl_pausedMenu.Location = new System.Drawing.Point(24, 73);
             this.pnl_pausedMenu.Name = "pnl_pausedMenu";
             this.pnl_pausedMenu.Size = new System.Drawing.Size(751, 353);
             this.pnl_pausedMenu.TabIndex = 8;
             // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.lbl_paused, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.bttn_GiveUp, 0, 1);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40.68768F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 59.31232F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(747, 349);
+            this.tableLayoutPanel1.TabIndex = 2;
+            // 
             // lbl_paused
             // 
-            this.lbl_paused.AutoSize = true;
-            this.lbl_paused.Location = new System.Drawing.Point(-2, 0);
+            this.lbl_paused.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.lbl_paused.Location = new System.Drawing.Point(73, 37);
             this.lbl_paused.Name = "lbl_paused";
-            this.lbl_paused.Size = new System.Drawing.Size(45, 15);
+            this.lbl_paused.Size = new System.Drawing.Size(600, 105);
             this.lbl_paused.TabIndex = 1;
             this.lbl_paused.Text = "Paused";
+            this.lbl_paused.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // bttn_GiveUp
             // 
-            this.bttn_GiveUp.Location = new System.Drawing.Point(3, 18);
+            this.bttn_GiveUp.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.bttn_GiveUp.Location = new System.Drawing.Point(248, 145);
             this.bttn_GiveUp.Name = "bttn_GiveUp";
-            this.bttn_GiveUp.Size = new System.Drawing.Size(160, 23);
+            this.bttn_GiveUp.Size = new System.Drawing.Size(250, 95);
             this.bttn_GiveUp.TabIndex = 0;
             this.bttn_GiveUp.Text = "Give Up";
             this.bttn_GiveUp.UseVisualStyleBackColor = true;
             this.bttn_GiveUp.Click += new System.EventHandler(this.bttn_GiveUp_Click);
+            // 
+            // bttn_return
+            // 
+            this.bttn_return.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bttn_return.Location = new System.Drawing.Point(0, 53);
+            this.bttn_return.Name = "bttn_return";
+            this.bttn_return.Size = new System.Drawing.Size(800, 397);
+            this.bttn_return.TabIndex = 9;
+            this.bttn_return.Text = "You Win\r\nReturn to Menu";
+            this.bttn_return.UseVisualStyleBackColor = true;
             // 
             // MazeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.bttn_return);
             this.Controls.Add(this.pnl_pausedMenu);
             this.Controls.Add(this.lbl_Username);
             this.Controls.Add(this.lbl_timer);
@@ -139,7 +170,7 @@ namespace MazeGeneratorProject.Forms
             this.Shown += new System.EventHandler(this.MazeForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).EndInit();
             this.pnl_pausedMenu.ResumeLayout(false);
-            this.pnl_pausedMenu.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -153,5 +184,7 @@ namespace MazeGeneratorProject.Forms
         private System.Windows.Forms.Panel pnl_pausedMenu;
         private System.Windows.Forms.Label lbl_paused;
         private System.Windows.Forms.Button bttn_GiveUp;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Button bttn_return;
     }
 }
