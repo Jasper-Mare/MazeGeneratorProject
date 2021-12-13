@@ -336,6 +336,13 @@ namespace MazeGeneratorProject.Forms {
             Updater = null;
             maze = null;
             marker.pastLocations = new Stack<int>();
+
+            if (!gaveUp) {
+                user.Times[(int)options.Diff].Add(UserTime.ElapsedMilliseconds/1000f);
+            }
+
+            user.SaveToFile();
+
             Program.appWindow.SetActiveForm(new Forms.MainMenu(user));
         }
 

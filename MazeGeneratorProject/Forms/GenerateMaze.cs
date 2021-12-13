@@ -15,8 +15,8 @@ namespace MazeGeneratorProject.Forms {
         Bitmap difficultyBarImg = new Bitmap(100, 50);
 
         //===options=controls===//
-        int controllWidths = 150;
-        int controllGaps = 20;
+        const int controllWidths = 150;
+        const int controllGaps = 20;
         ComboBox drpdwn_GenType;
         Button bttn_ChooseTemplate;
         Button bttn_ResetTemplate;
@@ -126,7 +126,7 @@ namespace MazeGeneratorProject.Forms {
             drpdwn_Style.DropDownStyle = ComboBoxStyle.DropDownList;
             drpdwn_Style.Size = new Size(controllWidths, drpdwn_Style.Size.Height);
             drpdwn_Style.ItemHeight *= 2;
-            foreach (Style s in StyleSheet.mazestyles) { drpdwn_Style.Items.Add(s); }
+            foreach (Style s in StyleSheet.mazeStyles) { drpdwn_Style.Items.Add(s); }
             drpdwn_Style.SelectedIndex = 0;
             drpdwn_Style.DrawMode = DrawMode.OwnerDrawVariable;
             drpdwn_Style.DrawItem += Drpdwn_Style_DrawItem;

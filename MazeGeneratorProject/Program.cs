@@ -13,12 +13,12 @@ namespace MazeGeneratorProject {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            //appWindow = new ApplicationWindow(new Forms.BeginningForm());
+            appWindow = new ApplicationWindow(new Forms.BeginningForm());
 
             //=======================================|| A way for me to skip to a different form during coding
-            User me;
-            User.ReadUserFromFile(0, out me);
-            appWindow = new ApplicationWindow(new Forms.MazeOptions(me));
+            //User me;
+            //User.ReadUserFromFile(0, out me);
+            //appWindow = new ApplicationWindow(new Forms.MazeOptions(me));
             //=======================================||
 
             Application.Run(appWindow);

@@ -33,6 +33,7 @@ namespace MazeGeneratorProject.Forms
             this.lbl_Username = new System.Windows.Forms.Label();
             this.tbctl_Graphs = new System.Windows.Forms.TabControl();
             this.bttn_generate = new System.Windows.Forms.Button();
+            this.bttn_setMovement = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // bttn_LogOut
@@ -80,11 +81,23 @@ namespace MazeGeneratorProject.Forms
             this.bttn_generate.UseVisualStyleBackColor = true;
             this.bttn_generate.Click += new System.EventHandler(this.bttn_generate_Click);
             // 
+            // bttn_setMovement
+            // 
+            this.bttn_setMovement.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bttn_setMovement.Location = new System.Drawing.Point(12, 210);
+            this.bttn_setMovement.Name = "bttn_setMovement";
+            this.bttn_setMovement.Size = new System.Drawing.Size(303, 34);
+            this.bttn_setMovement.TabIndex = 4;
+            this.bttn_setMovement.Text = "Set Movement Keys";
+            this.bttn_setMovement.UseVisualStyleBackColor = true;
+            this.bttn_setMovement.Click += new System.EventHandler(this.bttn_setMovement_Click);
+            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.bttn_setMovement);
             this.Controls.Add(this.bttn_generate);
             this.Controls.Add(this.tbctl_Graphs);
             this.Controls.Add(this.lbl_Username);
@@ -102,5 +115,6 @@ namespace MazeGeneratorProject.Forms
         private System.Windows.Forms.Label lbl_Username;
         private System.Windows.Forms.TabControl tbctl_Graphs;
         private System.Windows.Forms.Button bttn_generate;
+        private System.Windows.Forms.Button bttn_setMovement;
     }
 }
