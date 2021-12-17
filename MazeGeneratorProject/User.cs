@@ -12,10 +12,11 @@ namespace MazeGeneratorProject {
         public int Id;
         public string Name;
         public List<float>[] Times;
-        public Keys KeySelect;
-        public Keys KeyCCW;
-        public Keys KeyCW;
-        
+        public Keys KeyUp;
+        public Keys KeyLeft;
+        public Keys KeyRight;
+        public Keys KeyDown;
+
         public User(string name, int id = -1) {
             Name = name;
             Times = new List<float>[(int)Difficulty.Count];
@@ -31,9 +32,10 @@ namespace MazeGeneratorProject {
                     Id = int.Parse(file[file.Length-1].Split(',')[0])+1; //id, name
                 }
             }
-            KeyCCW = Keys.Q;
-            KeySelect = Keys.W;
-            KeyCW = Keys.E;
+            KeyLeft = Keys.Left;
+            KeyUp = Keys.Up;
+            KeyRight = Keys.Right;
+            KeyDown = Keys.Down;
         }
         private static string[] readFile(string address) {
             string[] file = new string[0];
@@ -68,9 +70,10 @@ namespace MazeGeneratorProject {
                     user.Name = line[1];
                     user.GetTimesFromFile();
                     //https://stackoverflow.com/a/19077881
-                    user.KeyCCW = (Keys)Enum.Parse(typeof(Keys), line[2]);
-                    user.KeySelect = (Keys)Enum.Parse(typeof(Keys), line[3]);
-                    user.KeyCW = (Keys)Enum.Parse(typeof(Keys), line[4]);
+                    user.KeyLeft = (Keys)Enum.Parse(typeof(Keys), line[2]);
+                    user.KeyUp = (Keys)Enum.Parse(typeof(Keys), line[3]);
+                    user.KeyRight = (Keys)Enum.Parse(typeof(Keys), line[4]);
+                    user.KeyDown = (Keys)Enum.Parse(typeof(Keys), line[5]);
                     break;
                 }
             }
@@ -89,9 +92,10 @@ namespace MazeGeneratorProject {
                     user.Name = line[1];
                     user.GetTimesFromFile();
                     //https://stackoverflow.com/a/19077881
-                    user.KeyCCW = (Keys)Enum.Parse(typeof(Keys), line[2]);
-                    user.KeySelect = (Keys)Enum.Parse(typeof(Keys), line[3]);
-                    user.KeyCW = (Keys)Enum.Parse(typeof(Keys), line[4]);
+                    user.KeyLeft = (Keys)Enum.Parse(typeof(Keys), line[2]);
+                    user.KeyUp = (Keys)Enum.Parse(typeof(Keys), line[3]);
+                    user.KeyRight = (Keys)Enum.Parse(typeof(Keys), line[4]);
+                    user.KeyDown = (Keys)Enum.Parse(typeof(Keys), line[5]);
                     break;
                 }
             }
@@ -108,18 +112,18 @@ namespace MazeGeneratorProject {
                     string[] line = str.Split(','); //id, name
                     if (line[0] == Id.ToString()) {
                         foundUser = true;
-                        file[i] = Id.ToString()+","+Name+","+KeyCCW+","+KeySelect+","+KeyCW; //overwrite user in case keys changed
+                        file[i] = Id.ToString()+","+Name+","+KeyLeft+","+KeyUp+","+KeyRight+","+KeyDown; //overwrite user in case keys changed
                         break;
                     }
                     i++;
                 }
                 if (!foundUser) {
-                    File.AppendAllTextAsync(AppDomain.CurrentDomain.BaseDirectory + UsersFileLoc, "\n"+Id.ToString()+","+Name+","+KeyCCW+","+KeySelect+","+KeyCW);
+                    File.AppendAllTextAsync(AppDomain.CurrentDomain.BaseDirectory + UsersFileLoc, "\n"+Id.ToString()+","+Name+","+KeyLeft+","+KeyUp+","+KeyRight+","+KeyDown);
                 } else {
                     File.WriteAllLinesAsync(AppDomain.CurrentDomain.BaseDirectory + UsersFileLoc, file);
                 }
             } else {
-                 File.AppendAllTextAsync(AppDomain.CurrentDomain.BaseDirectory + UsersFileLoc, Id.ToString()+","+Name+","+KeyCCW+","+KeySelect+","+KeyCW);
+                 File.AppendAllTextAsync(AppDomain.CurrentDomain.BaseDirectory + UsersFileLoc, Id.ToString()+","+Name+","+KeyLeft+","+KeyUp+","+KeyRight+","+KeyDown);
             }
             //save to times.txt
             if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + TimesFileLoc)) {

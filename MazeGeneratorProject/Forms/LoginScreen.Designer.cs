@@ -2,6 +2,7 @@
             this.txtbx_username = new System.Windows.Forms.TextBox();
             this.lbl_usrnm = new System.Windows.Forms.Label();
             this.bttn_login = new System.Windows.Forms.Button();
+            this.lbl_usernameRules = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lbl_title
@@ -26,6 +27,7 @@
             this.txtbx_username.Name = "txtbx_username";
             this.txtbx_username.Size = new System.Drawing.Size(637, 26);
             this.txtbx_username.TabIndex = 1;
+            this.txtbx_username.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.txtbx_username_PreviewKeyDown);
             // 
             // lbl_usrnm
             // 
@@ -53,11 +55,24 @@
             this.bttn_login.UseVisualStyleBackColor = false;
             this.bttn_login.Click += new System.EventHandler(this.bttn_login_Click);
             // 
+            // lbl_usernameRules
+            // 
+            this.lbl_usernameRules.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbl_usernameRules.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lbl_usernameRules.Location = new System.Drawing.Point(12, 190);
+            this.lbl_usernameRules.Name = "lbl_usernameRules";
+            this.lbl_usernameRules.Size = new System.Drawing.Size(637, 58);
+            this.lbl_usernameRules.TabIndex = 4;
+            this.lbl_usernameRules.Text = "A valid username consists of only:\r\nletters (lower and upper case), and numbers";
+            this.lbl_usernameRules.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
             // LoginScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(661, 270);
+            this.Controls.Add(this.lbl_usernameRules);
             this.Controls.Add(this.bttn_login);
             this.Controls.Add(this.lbl_usrnm);
             this.Controls.Add(this.txtbx_username);
@@ -68,4 +83,6 @@
             this.ResumeLayout(false);
             this.PerformLayout();
 
-        }          #endregion          private System.Windows.Forms.Label lbl_title;         private System.Windows.Forms.TextBox txtbx_username;         private System.Windows.Forms.Label lbl_usrnm;         private System.Windows.Forms.Button bttn_login;     } }
+        }          #endregion          private System.Windows.Forms.Label lbl_title;         private System.Windows.Forms.TextBox txtbx_username;         private System.Windows.Forms.Label lbl_usrnm;         private System.Windows.Forms.Button bttn_login;
+        private System.Windows.Forms.Label lbl_usernameRules;
+    } }

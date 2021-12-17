@@ -18,7 +18,6 @@ namespace MazeGeneratorProject.Forms {
 
         private void MainMenu_Load(object sender, EventArgs e) {
             lbl_Username.Font = StyleSheet.Headings;
-            lbl_Username.Text = "Hello " + user.Name;
             bttn_LogOut.Font = StyleSheet.Body;
             bttn_generate.Font = StyleSheet.Body;
             bttn_setMovement.Font = StyleSheet.Body;

@@ -34,6 +34,10 @@ namespace MazeGeneratorProject.Forms
             this.tbctl_Graphs = new System.Windows.Forms.TabControl();
             this.bttn_generate = new System.Windows.Forms.Button();
             this.bttn_setMovement = new System.Windows.Forms.Button();
+            this.lbl_keyLeft = new System.Windows.Forms.Label();
+            this.lbl_keyRight = new System.Windows.Forms.Label();
+            this.lbl_keyDown = new System.Windows.Forms.Label();
+            this.lbl_keyUp = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // bttn_LogOut
@@ -55,7 +59,7 @@ namespace MazeGeneratorProject.Forms
             this.lbl_Username.Name = "lbl_Username";
             this.lbl_Username.Size = new System.Drawing.Size(303, 68);
             this.lbl_Username.TabIndex = 1;
-            this.lbl_Username.Text = "Hello username";
+            this.lbl_Username.Text = "Welcome";
             this.lbl_Username.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tbctl_Graphs
@@ -84,19 +88,67 @@ namespace MazeGeneratorProject.Forms
             // bttn_setMovement
             // 
             this.bttn_setMovement.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bttn_setMovement.Location = new System.Drawing.Point(12, 210);
+            this.bttn_setMovement.Location = new System.Drawing.Point(12, 177);
             this.bttn_setMovement.Name = "bttn_setMovement";
             this.bttn_setMovement.Size = new System.Drawing.Size(303, 34);
             this.bttn_setMovement.TabIndex = 4;
-            this.bttn_setMovement.Text = "Set Movement Keys";
+            this.bttn_setMovement.Text = "Change Movement Keys";
             this.bttn_setMovement.UseVisualStyleBackColor = true;
             this.bttn_setMovement.Click += new System.EventHandler(this.bttn_setMovement_Click);
+            // 
+            // lbl_keyLeft
+            // 
+            this.lbl_keyLeft.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_keyLeft.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lbl_keyLeft.Location = new System.Drawing.Point(169, 91);
+            this.lbl_keyLeft.Name = "lbl_keyLeft";
+            this.lbl_keyLeft.Size = new System.Drawing.Size(141, 38);
+            this.lbl_keyLeft.TabIndex = 5;
+            this.lbl_keyLeft.Text = "Left:";
+            this.lbl_keyLeft.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_keyRight
+            // 
+            this.lbl_keyRight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_keyRight.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lbl_keyRight.Location = new System.Drawing.Point(169, 131);
+            this.lbl_keyRight.Name = "lbl_keyRight";
+            this.lbl_keyRight.Size = new System.Drawing.Size(141, 38);
+            this.lbl_keyRight.TabIndex = 6;
+            this.lbl_keyRight.Text = "Right:";
+            this.lbl_keyRight.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_keyDown
+            // 
+            this.lbl_keyDown.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_keyDown.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lbl_keyDown.Location = new System.Drawing.Point(12, 131);
+            this.lbl_keyDown.Name = "lbl_keyDown";
+            this.lbl_keyDown.Size = new System.Drawing.Size(141, 38);
+            this.lbl_keyDown.TabIndex = 8;
+            this.lbl_keyDown.Text = "Down:";
+            this.lbl_keyDown.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lbl_keyUp
+            // 
+            this.lbl_keyUp.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_keyUp.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lbl_keyUp.Location = new System.Drawing.Point(12, 91);
+            this.lbl_keyUp.Name = "lbl_keyUp";
+            this.lbl_keyUp.Size = new System.Drawing.Size(141, 38);
+            this.lbl_keyUp.TabIndex = 7;
+            this.lbl_keyUp.Text = "Up:";
+            this.lbl_keyUp.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lbl_keyDown);
+            this.Controls.Add(this.lbl_keyUp);
+            this.Controls.Add(this.lbl_keyRight);
+            this.Controls.Add(this.lbl_keyLeft);
             this.Controls.Add(this.bttn_setMovement);
             this.Controls.Add(this.bttn_generate);
             this.Controls.Add(this.tbctl_Graphs);
@@ -116,5 +168,9 @@ namespace MazeGeneratorProject.Forms
         private System.Windows.Forms.TabControl tbctl_Graphs;
         private System.Windows.Forms.Button bttn_generate;
         private System.Windows.Forms.Button bttn_setMovement;
+        private System.Windows.Forms.Label lbl_keyLeft;
+        private System.Windows.Forms.Label lbl_keyRight;
+        private System.Windows.Forms.Label lbl_keyDown;
+        private System.Windows.Forms.Label lbl_keyUp;
     }
 }

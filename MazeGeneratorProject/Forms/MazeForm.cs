@@ -317,11 +317,11 @@ namespace MazeGeneratorProject.Forms {
         }
 
         private void KeyPressed(object sender, KeyEventArgs e) {
-            if (e.KeyCode == user.KeyCW    ) { KeyCWPressed = true; }
-            if (e.KeyCode == user.KeyCCW   ) { KeyCCWPressed = true; }
+            if (e.KeyCode == user.KeyRight    ) { KeyCWPressed = true; }
+            if (e.KeyCode == user.KeyLeft   ) { KeyCCWPressed = true; }
         }
         private void KeyUnpressed(object sender, KeyEventArgs e) {
-            if (e.KeyCode == user.KeySelect) { KeySelectPressed = true; }
+            if (e.KeyCode == user.KeyUp) { KeySelectPressed = true; }
             if (e.KeyCode == Keys.Escape) { paused = !paused; if (paused) { UserTime.Stop(); pnl_pausedMenu.Show(); } else { UserTime.Start(); pnl_pausedMenu.Hide(); } } //toggle paused
         }
 

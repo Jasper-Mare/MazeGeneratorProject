@@ -29,9 +29,9 @@ namespace MazeGeneratorProject.Forms {
             lbl_cw_val.Font = StyleSheet.Body;
             lbl_select_val.Font = StyleSheet.Body;
 
-            lbl_ccw_val.Text = user.KeyCCW.ToString();
-            lbl_cw_val.Text = user.KeyCW.ToString();
-            lbl_select_val.Text = user.KeySelect.ToString();
+            lbl_ccw_val.Text = user.KeyLeft.ToString();
+            lbl_cw_val.Text = user.KeyRight.ToString();
+            lbl_select_val.Text = user.KeyUp.ToString();
             
             bttn_set_ccw.Font = StyleSheet.Body;
             bttn_set_cw.Font = StyleSheet.Body;
@@ -76,13 +76,13 @@ namespace MazeGeneratorProject.Forms {
 
                 switch (listening) {
                     case 0:
-                        user.KeyCCW = key;
+                        user.KeyLeft = key;
                     break;
                     case 1:
-                        user.KeyCW = key;
+                        user.KeyRight = key;
                     break;
                     case 2:
-                        user.KeySelect = key;
+                        user.KeyUp = key;
                     break;
                 }
             }
