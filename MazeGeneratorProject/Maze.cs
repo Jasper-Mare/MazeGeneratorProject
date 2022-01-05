@@ -5,22 +5,22 @@ using System.Linq;
 
 namespace MazeGeneratorProject {
     class Maze {
-        public int startCell, endCell;
+        public int StartCell, EndCell;
         public Cell [] Cells;
-        public int[] keys;
+        public int[] Keys;
 
         //==generate==generate==generate==generate==
         public void Generate(GeneratorOptions options) {
             Random rng = new Random();
-            switch (options.generationType) {
-                case GeneratorOptions.GenerationType.Gamma:
-                    Cells = createGammaMesh(options.Size, options.Appearance.passageW*2);
+            switch (options.GenerationType) {
+                case GeneratorOptions._GenerationType.Gamma:
+                    Cells = createGammaMesh(options.Size, options.Appearance.PassageW*2);
                     break;
-                case GeneratorOptions.GenerationType.Delta:
-                    Cells = createDeltaMesh(options.Size, options.Appearance.passageW*2);
+                case GeneratorOptions._GenerationType.Delta:
+                    Cells = createDeltaMesh(options.Size, options.Appearance.PassageW*2);
                     break;
-                case GeneratorOptions.GenerationType.Theta:
-                    Cells = createThetaMesh(options.Size, options.Appearance.passageW*2);
+                case GeneratorOptions._GenerationType.Theta:
+                    Cells = createThetaMesh(options.Size, options.Appearance.PassageW*2);
                     break;
                 default:
                     return;
@@ -99,13 +99,13 @@ namespace MazeGeneratorProject {
             }
 
             if (options.Keys) {
-                keys = new int[options.Size/10];
-                for (int i = 0; i < keys.Length; i++) {
+                Keys = new int[options.Size/10];
+                for (int i = 0; i < Keys.Length; i++) {
                     int val = rng.Next(0, Cells.Length);
-                    while (keys.Contains(val) || val == startCell || val == endCell) {
+                    while (Keys.Contains(val) || val == StartCell || val == EndCell) {
                         val = rng.Next(0, Cells.Length);
                     }
-                    keys[i] = val;
+                    Keys[i] = val;
                 }
             }
 
@@ -125,19 +125,21 @@ namespace MazeGeneratorProject {
                 int x = i % mazeW, y = i / mazeW;
                 PointF pos = new PointF(x*spaceing, y*spaceing);
 
+                Cell tmp = new Cell(pos);
+
                 List<Connection> neighbours = new List<Connection>();
                 //connect neighbours in a clockwise order (top,right,bottom,left)
-                if (y != 0)       { neighbours.Add(new Connection(x+((y-1)*mazeW), false)); }
-                if (x != mazeW-1) { neighbours.Add(new Connection((x+1)+(y*mazeW), false)); }
-                if (y != mazeH-1) { neighbours.Add(new Connection(x+((y+1)*mazeW), false)); }
-                if (x != 0)       { neighbours.Add(new Connection((x-1)+(y*mazeW), false)); }
+                if (y != 0)       { neighbours.Add(new Connection(x+((y-1)*mazeW), false)); } else { tmp.Up    = false; }
+                if (x != mazeW-1) { neighbours.Add(new Connection((x+1)+(y*mazeW), false)); } else { tmp.Right = false; }
+                if (y != mazeH-1) { neighbours.Add(new Connection(x+((y+1)*mazeW), false)); } else { tmp.Down  = false; }
+                if (x != 0)       { neighbours.Add(new Connection((x-1)+(y*mazeW), false)); } else { tmp.Left  = false; }
 
-
-                vertices.Add(new Cell(pos, neighbours.ToArray()));
+                tmp.Neighbours = neighbours.ToArray();
+                vertices.Add(tmp);
             }
             
-            startCell = rng.Next(0, mazeW); //x is random, y is 0
-            endCell   = rng.Next(0, mazeW)+(mazeH-1)*mazeW; //x is random, y is height
+            StartCell = rng.Next(0, mazeW); //x is random, y is 0
+            EndCell   = rng.Next(0, mazeW)+(mazeH-1)*mazeW; //x is random, y is height
 
             return vertices.ToArray();
         }
@@ -171,8 +173,8 @@ namespace MazeGeneratorProject {
 
             Random rng = new Random();
 
-            startCell = 0; //top-most point
-            endCell = rng.Next(1, Size) + (int)(0.5f*Size*(Size-1)); //x is random, y is height
+            StartCell = 0; //top-most point
+            EndCell = rng.Next(1, Size) + (int)(0.5f*Size*(Size-1)); //x is random, y is height
 
             //to find index of a cell:
             //to the left: sub 1
@@ -231,9 +233,9 @@ namespace MazeGeneratorProject {
                 }
             }
             
-            startCell = vertices.Count-(int)(numInOuterCircle*0.5f);
+            StartCell = vertices.Count-(int)(numInOuterCircle*0.5f);
             Random rng = new Random();
-            endCell = rng.Next(0,startingcells);
+            EndCell = rng.Next(0,startingcells);
 
             return vertices.ToArray();
         }
@@ -246,10 +248,10 @@ namespace MazeGeneratorProject {
         public int[] Solve() {
             List<Path> Paths = new List<Path>();
 
-            if (endCell < 0 || endCell > Cells.Length-1 || startCell < 0 || startCell > Cells.Length-1) { throw new Exception("Start/end cell is outside of maze."); }
+            if (EndCell < 0 || EndCell > Cells.Length-1 || StartCell < 0 || StartCell > Cells.Length-1) { throw new Exception("Start/end cell is outside of maze."); }
 
             Paths.Add(new Path());
-            Paths[0].Add(startCell);
+            Paths[0].Add(StartCell);
 
             int loops = 0;
             while (Paths.Count > 0) {
@@ -257,7 +259,7 @@ namespace MazeGeneratorProject {
                 List<Path> pathsToRemove = new List<Path>();
                 foreach (Path p in Paths.ToList()) { //https://stackoverflow.com/a/604843
 
-                    if (p.Contains(endCell)) { return p.ToArray(); }
+                    if (p.Contains(EndCell)) { return p.ToArray(); }
 
                     int lastCell = (p.Count >= 2)? p[p.Count-2] : -1;
                     Connection[] nextConnections = Cells[p[p.Count - 1]].NeighboursConnected.Where(n => n.NeighbourIndex != lastCell).ToArray();
@@ -300,13 +302,33 @@ namespace MazeGeneratorProject {
         public float X { get { return Position.X; } }
         public float Y { get { return Position.Y; } }
 
+        public bool Up;
+        public bool Down;
+        public bool Left;
+        public bool Right;
+
         public Cell(PointF position, Connection[] neighbours) {
             Position = position;
             Neighbours = neighbours;
+
+            Up = true;
+            Down = true;
+            Left = true;
+            Right = true;
+        }
+
+        public Cell(PointF position) {
+            Position = position;
+            Neighbours = null;
+
+            Up = true;
+            Down = true;
+            Left = true;
+            Right = true;
         }
     }
 
-    struct Connection {
+    class Connection {
         public readonly int NeighbourIndex;
         public bool Connected;
         public bool setup;

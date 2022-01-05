@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace MazeGeneratorProject {
     public static class Program {
-        public static ApplicationWindow appWindow;
+        public static ApplicationWindow AppWindow;
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -13,7 +13,7 @@ namespace MazeGeneratorProject {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            appWindow = new ApplicationWindow(new Forms.BeginningForm());
+            AppWindow = new ApplicationWindow(new Forms.BeginningForm());
 
             //=======================================|| A way for me to skip to a different form during coding
             //User me;
@@ -21,7 +21,7 @@ namespace MazeGeneratorProject {
             //appWindow = new ApplicationWindow(new Forms.MazeOptions(me));
             //=======================================||
 
-            Application.Run(appWindow);
+            Application.Run(AppWindow);
         }
     }
 }

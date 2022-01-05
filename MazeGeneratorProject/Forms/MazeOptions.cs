@@ -126,7 +126,7 @@ namespace MazeGeneratorProject.Forms {
             drpdwn_Style.DropDownStyle = ComboBoxStyle.DropDownList;
             drpdwn_Style.Size = new Size(controllWidths, drpdwn_Style.Size.Height);
             drpdwn_Style.ItemHeight *= 2;
-            foreach (Style s in StyleSheet.mazeStyles) { drpdwn_Style.Items.Add(s); }
+            foreach (Style s in StyleSheet.MazeStyles) { drpdwn_Style.Items.Add(s); }
             drpdwn_Style.SelectedIndex = 0;
             drpdwn_Style.DrawMode = DrawMode.OwnerDrawVariable;
             drpdwn_Style.DrawItem += Drpdwn_Style_DrawItem;
@@ -244,7 +244,7 @@ namespace MazeGeneratorProject.Forms {
             lbl_Template.Text = "No Template";
         }
         private void Bttn_back_Click(object sender, EventArgs e) {
-            Program.appWindow.SetActiveForm(new MainMenu(user));
+            Program.AppWindow.SetActiveForm(new MainMenu(user));
         }
 
         private void CalculateDifficulty() {
@@ -282,7 +282,7 @@ namespace MazeGeneratorProject.Forms {
         private void bttn_GenMaze_Click(object sender, EventArgs e) {
             GeneratorOptions options = new GeneratorOptions();
             options.Appearance = (Style)drpdwn_Style.SelectedItem;
-            options.generationType = (GeneratorOptions.GenerationType)drpdwn_GenType.SelectedIndex;
+            options.GenerationType = (GeneratorOptions._GenerationType)drpdwn_GenType.SelectedIndex;
             
             options.Keys = chbx_Keys.Checked;
             options.Minotaur = chbx_Minotaur.Checked;
@@ -296,7 +296,7 @@ namespace MazeGeneratorProject.Forms {
             options.Size = 10*trkbr_size.Value;
             options.Diff = diff;
 
-            Program.appWindow.SetActiveForm(new MazeForm(user, options));
+            Program.AppWindow.SetActiveForm(new MazeForm(user, options));
         }
     }
 }

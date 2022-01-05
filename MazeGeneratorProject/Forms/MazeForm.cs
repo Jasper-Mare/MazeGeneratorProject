@@ -14,20 +14,20 @@ namespace MazeGeneratorProject.Forms {
         //=== engine vars === engine vars === engine vars === engine vars === engine vars === //
         //====================================================================================//
         #region Engine Variables
-        new const int Width  = 720;
-        new const int Height = 720;
+        const int width  = 720;
+        const int height = 720;
 
-        Bitmap image = new Bitmap(Width, Height);
+        Bitmap image = new Bitmap(width, height);
         Graphics gfx;
-        System.Timers.Timer Updater = new System.Timers.Timer(1);
+        System.Timers.Timer updater = new System.Timers.Timer(1);
         Stopwatch updateTimer = new Stopwatch();
         Stopwatch frameTimer = new Stopwatch();
 
         InterpolationMode interpMode = InterpolationMode.NearestNeighbor;
-        PointF CameraPos;
+        PointF cameraPos;
         #endregion
 
-        Stopwatch UserTime = new Stopwatch();
+        Stopwatch userTime = new Stopwatch();
         User user;
 
         Random rng = new Random();
@@ -41,9 +41,9 @@ namespace MazeGeneratorProject.Forms {
         bool solved = false;
         bool exitLocked;
 
-        bool KeySelectPressed = false;
-        bool KeyCWPressed = false;
-        bool KeyCCWPressed = false;
+        bool keySelectPressed = false;
+        bool keyCWPressed = false;
+        bool keyCCWPressed = false;
 
         struct marker {
             public static int currentCellIndex;
@@ -52,7 +52,7 @@ namespace MazeGeneratorProject.Forms {
             public static readonly float speed = 2f;
             public static Stack<int> pastLocations = new Stack<int>();
             public enum stateType { waiting, moving }
-            public static stateType State = stateType.waiting;
+            public static stateType state = stateType.waiting;
         }
         int selectedDirection;
 
@@ -94,15 +94,15 @@ namespace MazeGeneratorProject.Forms {
             maze = new Maze();
             maze.Generate(options);
 
-            marker.pastLocations.Push(maze.startCell);
+            marker.pastLocations.Push(maze.StartCell);
 
             bttn_Start.Text = "START";
             bttn_Start.Enabled = true;
         }
 
         private void bttn_Start_Click(object sender, EventArgs e) {
-            marker.currentCellIndex = maze.startCell;
-            marker.nextCellIndex = maze.startCell;
+            marker.currentCellIndex = maze.StartCell;
+            marker.nextCellIndex = maze.StartCell;
             marker.proportionAlongPassage = 1;
 
             KeyPreview = true;
@@ -110,11 +110,11 @@ namespace MazeGeneratorProject.Forms {
             KeyUp += KeyUnpressed;
 
             //start the timer
-            Updater.Elapsed += UpdateLoop;
-            Updater.Enabled = true;
+            updater.Elapsed += UpdateLoop;
+            updater.Enabled = true;
             Canvas.Invalidate();
             Canvas.Paint += Canvas_Paint;
-            UserTime.Start();
+            userTime.Start();
 
             bttn_Start.Hide();
         }
@@ -128,22 +128,22 @@ namespace MazeGeneratorProject.Forms {
                     bttn_return.Show();
                 }
             } else {
-                lbl_timer.Text = "Time: " + UserTime.Elapsed.ToString(@"hh\:mm\:ss\:f");
+                lbl_timer.Text = "Time: " + userTime.Elapsed.ToString(@"hh\:mm\:ss\:f");
 
                 Brush psgBrsh = options.Appearance.PassageBrush;
-                int psgW = options.Appearance.passageW;
+                int psgW = options.Appearance.PassageW;
 
                 Point markerPos = new Point((int)(maze.Cells[marker.currentCellIndex].X + (maze.Cells[marker.nextCellIndex].X - maze.Cells[marker.currentCellIndex].X) * marker.proportionAlongPassage - psgW / 2), (int)(maze.Cells[marker.currentCellIndex].Y + (maze.Cells[marker.nextCellIndex].Y - maze.Cells[marker.currentCellIndex].Y) * marker.proportionAlongPassage - psgW / 2));
-                CameraPos = markerPos; CameraPos.X += psgW/2; CameraPos.Y += psgW / 2;
+                cameraPos = markerPos; cameraPos.X += psgW/2; cameraPos.Y += psgW / 2;
 
-                gfx.FillRectangle(options.Appearance.WallBrush, 0,0, Width, Height);
+                gfx.FillRectangle(options.Appearance.WallBrush, 0,0, width, height);
                 gfx.ResetClip();
-                gfx.TranslateTransform(Width/2, Height/2);
-                gfx.TranslateTransform(-CameraPos.X, -CameraPos.Y);
-                gfx.SetClip(new Rectangle((int)CameraPos.X-Width/2, (int)CameraPos.Y-Height/2, Width, Height));
+                gfx.TranslateTransform(width/2, height/2);
+                gfx.TranslateTransform(-cameraPos.X, -cameraPos.Y);
+                gfx.SetClip(new Rectangle((int)cameraPos.X-width/2, (int)cameraPos.Y-height/2, width, height));
                 //gfx.ScaleTransform(0.5f,0.5f);
                 //https://www.vbforums.com/showthread.php?624596-RESOLVED-Offsetting-a-HatchBrush
-                gfx.RenderingOrigin = new Point((int)CameraPos.X, (int)CameraPos.Y);
+                gfx.RenderingOrigin = new Point((int)cameraPos.X, (int)cameraPos.Y);
                 
                 //int i = 0;
                 foreach (Cell c in maze.Cells) {
@@ -165,14 +165,14 @@ namespace MazeGeneratorProject.Forms {
                 }
 
                 if (exitLocked) { 
-                    gfx.FillEllipse(Brushes.DarkGray, maze.Cells[maze.endCell].X-psgW/2, maze.Cells[maze.endCell].Y-psgW/2, psgW, psgW);
+                    gfx.FillEllipse(Brushes.DarkGray, maze.Cells[maze.EndCell].X-psgW/2, maze.Cells[maze.EndCell].Y-psgW/2, psgW, psgW);
                 } else { 
-                    gfx.FillEllipse(Brushes.Red, maze.Cells[maze.endCell].X-psgW/2, maze.Cells[maze.endCell].Y-psgW/2, psgW, psgW);
+                    gfx.FillEllipse(Brushes.Red, maze.Cells[maze.EndCell].X-psgW/2, maze.Cells[maze.EndCell].Y-psgW/2, psgW, psgW);
                 }
                 
 
                 if (options.Keys) {
-                    foreach (int keyLoc in maze.keys.Where(k => k != -1)) {
+                    foreach (int keyLoc in maze.Keys.Where(k => k != -1)) {
                         gfx.FillEllipse(Brushes.Gold, maze.Cells[keyLoc].X - psgW / 2, maze.Cells[keyLoc].Y - psgW / 2, psgW, psgW);
                     }
                 }
@@ -184,7 +184,7 @@ namespace MazeGeneratorProject.Forms {
 
                 //draw marker
                 gfx.FillEllipse(Brushes.Green, markerPos.X, markerPos.Y, psgW, psgW);
-                if (marker.State == marker.stateType.waiting) {
+                if (marker.state == marker.stateType.waiting) {
                     Pen p = new Pen(Color.Yellow, 5);
                     AdjustableArrowCap arrowCap = new AdjustableArrowCap(5,5);
                     p.CustomEndCap = arrowCap;
@@ -223,23 +223,23 @@ namespace MazeGeneratorProject.Forms {
         }
 
         private void UpdateLoop(object sender, EventArgs e) {
-            if (solved || Updater is null) { return; }
-            Updater.Enabled = false;
+            if (solved || updater is null) { return; }
+            updater.Enabled = false;
             float deltaT = paused? 0 : updateTimer.ElapsedMilliseconds / 1000f;
             updateTimer.Restart();
 
             //marker movement
-            if (marker.State == marker.stateType.moving) { marker.proportionAlongPassage += deltaT*marker.speed; }
-            if (!exitLocked && marker.currentCellIndex == maze.endCell) { solved = true; return; } //maze is solved, so leave this function before it is re-enabled
+            if (marker.state == marker.stateType.moving) { marker.proportionAlongPassage += deltaT*marker.speed; }
+            if (!exitLocked && marker.currentCellIndex == maze.EndCell) { solved = true; return; } //maze is solved, so leave this function before it is re-enabled
             
             if (marker.proportionAlongPassage >= 1) {
                 marker.proportionAlongPassage = 0;
                 int lastCell = marker.currentCellIndex;
                 marker.currentCellIndex = marker.nextCellIndex;
                 
-                if (options.Keys && maze.keys.Contains(marker.currentCellIndex)) { 
-                    maze.keys[Array.IndexOf(maze.keys, marker.currentCellIndex)] = -1;
-                    if (maze.keys.Distinct().ToArray() is int[] distinct && distinct.Count() == 1 && distinct[0] == -1) {
+                if (options.Keys && maze.Keys.Contains(marker.currentCellIndex)) { 
+                    maze.Keys[Array.IndexOf(maze.Keys, marker.currentCellIndex)] = -1;
+                    if (maze.Keys.Distinct().ToArray() is int[] distinct && distinct.Count() == 1 && distinct[0] == -1) {
                         //found all keys
                         exitLocked = false;
                     }
@@ -249,30 +249,30 @@ namespace MazeGeneratorProject.Forms {
                 if (nextConnections.Length == 1) { //passage
                     marker.nextCellIndex = nextConnections[0].NeighbourIndex;
                 } else { //dead end or junction
-                    marker.State = marker.stateType.waiting;
+                    marker.state = marker.stateType.waiting;
                     if (selectedDirection > nextConnections.Length) { selectedDirection = 0; }
                 }
             }
 
-            if (marker.State == marker.stateType.waiting) {
+            if (marker.state == marker.stateType.waiting) {
                 int numDir = maze.Cells[marker.currentCellIndex].NeighboursConnected.Length;
-                if (KeySelectPressed) {
+                if (keySelectPressed) {
                     marker.proportionAlongPassage = 0;
                     marker.nextCellIndex = maze.Cells[marker.currentCellIndex].NeighboursConnected[selectedDirection].NeighbourIndex;
-                    marker.State = marker.stateType.moving;
-                    KeySelectPressed = false;
+                    marker.state = marker.stateType.moving;
+                    keySelectPressed = false;
                 }
-                if (KeyCWPressed) { //index+
+                if (keyCWPressed) { //index+
                     selectedDirection = (selectedDirection+numDir+1)%numDir;
-                    KeyCWPressed = false;
+                    keyCWPressed = false;
                 }
-                if (KeyCCWPressed) { //index-
+                if (keyCCWPressed) { //index-
                     selectedDirection = (selectedDirection+numDir-1)%numDir;
-                    KeyCCWPressed = false;
+                    keyCCWPressed = false;
                 }
             }
 
-            if (marker.State == marker.stateType.moving && marker.proportionAlongPassage == 0) {
+            if (marker.state == marker.stateType.moving && marker.proportionAlongPassage == 0) {
                 if (marker.pastLocations.Count != 0) { marker.pastLocations.Pop(); }
                 if (!(marker.pastLocations.Count != 0 && marker.pastLocations.Peek() == marker.nextCellIndex)) {
                     marker.pastLocations.Push(marker.currentCellIndex);
@@ -313,16 +313,16 @@ namespace MazeGeneratorProject.Forms {
 
             }
 
-            Updater.Enabled = true;
+            updater.Enabled = true;
         }
 
         private void KeyPressed(object sender, KeyEventArgs e) {
-            if (e.KeyCode == user.KeyRight    ) { KeyCWPressed = true; }
-            if (e.KeyCode == user.KeyLeft   ) { KeyCCWPressed = true; }
+            if (e.KeyCode == user.KeyRight    ) { keyCWPressed = true; }
+            if (e.KeyCode == user.KeyLeft   ) { keyCCWPressed = true; }
         }
         private void KeyUnpressed(object sender, KeyEventArgs e) {
-            if (e.KeyCode == user.KeyUp) { KeySelectPressed = true; }
-            if (e.KeyCode == Keys.Escape) { paused = !paused; if (paused) { UserTime.Stop(); pnl_pausedMenu.Show(); } else { UserTime.Start(); pnl_pausedMenu.Hide(); } } //toggle paused
+            if (e.KeyCode == user.KeyUp) { keySelectPressed = true; }
+            if (e.KeyCode == Keys.Escape) { paused = !paused; if (paused) { userTime.Stop(); pnl_pausedMenu.Show(); } else { userTime.Start(); pnl_pausedMenu.Hide(); } } //toggle paused
         }
 
         private void bttn_GiveUp_Click(object sender, EventArgs e) {
@@ -333,17 +333,17 @@ namespace MazeGeneratorProject.Forms {
         }
 
         void MazeDone(bool gaveUp) {
-            Updater = null;
+            updater = null;
             maze = null;
             marker.pastLocations = new Stack<int>();
 
             if (!gaveUp) {
-                user.Times[(int)options.Diff].Add(UserTime.ElapsedMilliseconds/1000f);
+                user.Times[(int)options.Diff].Add(userTime.ElapsedMilliseconds/1000f);
             }
 
             user.SaveToFile();
 
-            Program.appWindow.SetActiveForm(new Forms.MainMenu(user));
+            Program.AppWindow.SetActiveForm(new Forms.MainMenu(user));
         }
 
     }

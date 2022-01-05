@@ -8,7 +8,7 @@ namespace MazeGeneratorProject {
         public static readonly Font Body = new Font(FontFamily.GenericSansSerif, 12);
         //public static readonly Bitmap Backgroundimage = ;
 
-        public static readonly Style[] mazeStyles = {
+        public static readonly Style[] MazeStyles = {
             //        walls          passages       passage width
             new Style(Brushes.Black, Brushes.White, 40),
             new Style(new HatchBrush(HatchStyle.HorizontalBrick, Color.Beige, Color.Firebrick), Brushes.NavajoWhite, 40),

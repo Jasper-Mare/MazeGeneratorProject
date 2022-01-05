@@ -9,7 +9,7 @@ namespace MazeGeneratorProject.Forms {
         }
 
         private void bttn_Start_Click(object sender, EventArgs e) {
-            Program.appWindow.SetActiveForm(new LoginScreen());
+            Program.AppWindow.SetActiveForm(new LoginScreen());
         }
     }
 }

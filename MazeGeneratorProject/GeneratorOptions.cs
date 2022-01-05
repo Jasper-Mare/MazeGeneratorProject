@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace MazeGeneratorProject {
     public class GeneratorOptions {
-        public enum GenerationType {Gamma, Delta, Theta}
-        public GenerationType generationType;
+        public enum _GenerationType { Gamma, Delta, Theta }
+        public _GenerationType GenerationType;
         public Bitmap TemplateImg;
         public Style Appearance;
         public bool Minotaur;
@@ -25,7 +20,7 @@ namespace MazeGeneratorProject {
 
     }
 
-    public enum Difficulty { 
+    public enum Difficulty {
         Easy, Medium, Hard,
         Count //https://stackoverflow.com/a/16946240
     }
@@ -33,11 +28,11 @@ namespace MazeGeneratorProject {
     public class Style {
         public Brush WallBrush;
         public Brush PassageBrush;
-        public int passageW;
-        public Style(Brush WallBrush, Brush PassageBrush, int PassageWidth) {
+        public int PassageW;
+        public Style(Brush WallBrush,Brush PassageBrush,int PassageWidth) {
             this.WallBrush = WallBrush;
             this.PassageBrush = PassageBrush;
-            passageW = PassageWidth;
+            PassageW = PassageWidth;
         }
     }
 }
