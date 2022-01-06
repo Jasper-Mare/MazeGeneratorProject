@@ -2,9 +2,8 @@
 
 namespace MazeGeneratorProject {
     public class GeneratorOptions {
-        public enum _GenerationType { Gamma, Delta, Theta }
+        public enum _GenerationType { Gamma, Delta}
         public _GenerationType GenerationType;
-        public Bitmap TemplateImg;
         public Style Appearance;
         public bool Minotaur;
         public bool MovingWalls;

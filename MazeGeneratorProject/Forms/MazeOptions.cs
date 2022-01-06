@@ -12,14 +12,11 @@ namespace MazeGeneratorProject.Forms {
     public partial class MazeOptions : Form {
         User user;
         Difficulty diff;
-        Bitmap difficultyBarImg = new Bitmap(100, 50);
 
         //===options=controls===//
         int controllWidths = 150;
         int controllGaps = 20;
         ComboBox drpdwn_GenType;
-        Button bttn_ChooseTemplate;
-        Button bttn_ResetTemplate;
         ComboBox drpdwn_Style;
         CheckBox chbx_Minotaur;
         CheckBox chbx_MovingWalls;
@@ -29,7 +26,6 @@ namespace MazeGeneratorProject.Forms {
         TrackBar trkbr_size;
 
         Label lbl_size;
-        Label lbl_Template;
         Label lbl_TitleGenType;
         Label lbl_TitleStyle;
         Label lbl_TitleBias;
@@ -43,14 +39,9 @@ namespace MazeGeneratorProject.Forms {
         }
 
         private void GenerateMaze_Load(object sender, EventArgs e) {
-            lbl_Username.Font = StyleSheet.Headings;
-            lbl_Username.Text = "Hello " + user.Name;
+            lbl_title.Font = StyleSheet.Headings;
             bttn_back.Font = StyleSheet.Body;
             bttn_GenMaze.Font = StyleSheet.Body;
-
-            bar_difficulty.Image = difficultyBarImg;
-            bar_difficulty.SizeMode = PictureBoxSizeMode.StretchImage;
-            bar_difficulty.BackColor = Color.Red;
 
             //pannel scrollbars
             pnl_Options.AutoScroll = true;
@@ -80,7 +71,6 @@ namespace MazeGeneratorProject.Forms {
             drpdwn_GenType.DropDownStyle = ComboBoxStyle.DropDownList;
             drpdwn_GenType.Items.Add("Gamma (squares)");
             drpdwn_GenType.Items.Add("Delta (triangles)");
-            drpdwn_GenType.Items.Add("Theta (circle)");
             drpdwn_GenType.Size = new Size(controllWidths, drpdwn_GenType.Height);
             drpdwn_GenType.Location = new Point(5, trkbr_size.Location.Y+trkbr_size.Height+controllGaps-25);
             pnl_Options.Controls.Add(drpdwn_GenType);
@@ -96,31 +86,6 @@ namespace MazeGeneratorProject.Forms {
             lbl_TitleGenType.Text = "Generation Type";
             pnl_Options.Controls.Add(lbl_TitleGenType);
 
-            //Choose template
-            bttn_ChooseTemplate = new Button();
-            bttn_ChooseTemplate.Location = new Point(5, drpdwn_GenType.Location.Y+drpdwn_GenType.Height+controllGaps);
-            bttn_ChooseTemplate.Size = new Size(controllWidths, bttn_ChooseTemplate.Size.Height);
-            bttn_ChooseTemplate.Text = "Set a Template";
-            bttn_ChooseTemplate.Click += Bttn_ChooseTemplate_Click;
-            pnl_Options.Controls.Add(bttn_ChooseTemplate);
-
-            //template label
-            lbl_Template = new Label();
-            lbl_Template.Location = new Point(5+controllWidths+controllGaps, bttn_ChooseTemplate.Location.Y+4);
-            lbl_Template.Size = new Size(pnl_Options.Width-(20+controllWidths+controllGaps), controllGaps+bttn_ChooseTemplate.Height*2-4);
-            lbl_Template.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
-            lbl_Template.AutoEllipsis = true;
-            lbl_Template.Text = "No Template";
-            pnl_Options.Controls.Add(lbl_Template);
-
-            //reset template
-            bttn_ResetTemplate = new Button();
-            bttn_ResetTemplate.Location = new Point(5, bttn_ChooseTemplate.Location.Y+bttn_ChooseTemplate.Size.Height+controllGaps);
-            bttn_ResetTemplate.Size = new Size(controllWidths, bttn_ResetTemplate.Size.Height);
-            bttn_ResetTemplate.Text = "Unset Template";
-            bttn_ResetTemplate.Click += Bttn_ResetTemplate_Click;
-            pnl_Options.Controls.Add(bttn_ResetTemplate);
-
             //maze appearence
             drpdwn_Style = new ComboBox();
             drpdwn_Style.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -132,7 +97,7 @@ namespace MazeGeneratorProject.Forms {
             drpdwn_Style.DrawItem += Drpdwn_Style_DrawItem;
             //https://stackoverflow.com/a/1883072
             drpdwn_Style.MouseWheel += Drpdwn_Style_MouseWheel;
-            drpdwn_Style.Location = new Point(5, bttn_ResetTemplate.Location.Y+bttn_ResetTemplate.Size.Height+controllGaps);
+            drpdwn_Style.Location = new Point(5, drpdwn_GenType.Location.Y+ drpdwn_GenType.Size.Height+controllGaps);
             pnl_Options.Controls.Add(drpdwn_Style);
 
             //appearence label
@@ -230,19 +195,6 @@ namespace MazeGeneratorProject.Forms {
                 gfx.FillRectangle(b2, rect.X+rect.Width/2, rect.Y+1, rect.Width/2-1, rect.Height-2);
             }
         }
-        private void Bttn_ChooseTemplate_Click(object sender, EventArgs e) {
-            //opens file dialog
-            openFile_TemplateImage.Filter = "PNG Images (*.png)|*.png|JPEG Images (*.jpeg)|*.jpeg";
-            openFile_TemplateImage.FilterIndex = 1;
-            openFile_TemplateImage.Multiselect = false;
-            if (openFile_TemplateImage.ShowDialog() == DialogResult.OK) {
-                string fileName = openFile_TemplateImage.FileName;
-                lbl_Template.Text = fileName;
-            }
-        }
-        private void Bttn_ResetTemplate_Click(object sender, EventArgs e) {
-            lbl_Template.Text = "No Template";
-        }
         private void Bttn_back_Click(object sender, EventArgs e) {
             Program.AppWindow.SetActiveForm(new MainMenu(user));
         }
@@ -250,33 +202,26 @@ namespace MazeGeneratorProject.Forms {
         private void CalculateDifficulty() {
             int difficultyPoints = 0;
             
-            if (drpdwn_GenType.SelectedIndex == (int)GeneratorOptions.GenerationType.Theta) { 
-                difficultyPoints += 1;
-            }
-
             if (chbx_Minotaur.Checked) { difficultyPoints += 1; }
             if (chbx_MovingWalls.Checked) { difficultyPoints += 1; }
             if (chbx_ReducedVisability.Checked) { difficultyPoints += 1; }
             if (chbx_Keys.Checked) { difficultyPoints += 1; }
 
-            if (Math.Abs(trkbr_bias.Value/2f) >= 2) { difficultyPoints += 2; }
-            else if (Math.Abs(trkbr_bias.Value/2f) >= 1) { difficultyPoints += 1; }
+            //difficultyPoints += trkbr_size.Value/3;
+            if (trkbr_size.Value < 4) {
+                difficultyPoints += 2;
+            } else if (trkbr_size.Value < 7) {
+                difficultyPoints += 5;
+            } else {
+                difficultyPoints += 7;
+            }
 
-            difficultyPoints += trkbr_size.Value/3;
-
-            lbl_diff.Text = "Difficulty: ";
-            //max difficulty points are 10
+            lbl_diff.Text = "This maze is ";
+            //max difficulty points are 11
             if (difficultyPoints >= 7) { lbl_diff.Text += Difficulty.Hard.ToString(); diff = Difficulty.Hard; }
-            else if (difficultyPoints >= 2) { lbl_diff.Text += Difficulty.Medium.ToString(); diff = Difficulty.Medium; }
+            else if (difficultyPoints >= 3) { lbl_diff.Text += Difficulty.Medium.ToString(); diff = Difficulty.Medium; }
             else { lbl_diff.Text += Difficulty.Easy.ToString(); diff = Difficulty.Easy; }
 
-            using (Graphics gfx = Graphics.FromImage(difficultyBarImg)) {
-                gfx.FillRectangle(Brushes.Lime, 0,0, 20, 50);
-                gfx.FillRectangle(Brushes.Yellow, 20,0, 50, 50);
-                gfx.FillRectangle(Brushes.Red, 70,0, 30, 50);
-                gfx.FillRectangle(new SolidBrush(Color.FromArgb(200, Color.Gray)), difficultyPoints*10,0, 100, 50);
-            }
-            bar_difficulty.Image = difficultyBarImg;
         }
 
         private void bttn_GenMaze_Click(object sender, EventArgs e) {
@@ -288,9 +233,6 @@ namespace MazeGeneratorProject.Forms {
             options.Minotaur = chbx_Minotaur.Checked;
             options.MovingWalls = chbx_MovingWalls.Checked;
             options.ReducedVisibility = chbx_ReducedVisability.Checked;
-            
-            if (lbl_Template.Text == "No Template") { options.TemplateImg = null; } 
-            else { options.TemplateImg = new Bitmap(lbl_Template.Text); }
 
             options.BiasStrength = MathF.Pow(2, trkbr_bias.Value/2f);
             options.Size = 10*trkbr_size.Value;

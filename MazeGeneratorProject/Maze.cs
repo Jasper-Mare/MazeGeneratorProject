@@ -8,6 +8,8 @@ namespace MazeGeneratorProject {
         public int StartCell, EndCell;
         public Cell [] Cells;
         public int[] Keys;
+        public PointF Centre = new PointF();
+        public SizeF Bounds = new SizeF();
 
         //==generate==generate==generate==generate==
         public void Generate(GeneratorOptions options) {
@@ -18,9 +20,6 @@ namespace MazeGeneratorProject {
                     break;
                 case GeneratorOptions._GenerationType.Delta:
                     Cells = createDeltaMesh(options.Size, options.Appearance.PassageW*2);
-                    break;
-                case GeneratorOptions._GenerationType.Theta:
-                    Cells = createThetaMesh(options.Size, options.Appearance.PassageW*2);
                     break;
                 default:
                     return;
@@ -118,6 +117,10 @@ namespace MazeGeneratorProject {
             int mazeW = Size;
             int mazeH = (int)(Size*(float)(rng.Next(75, 125)/100f));
 
+            Bounds.Width = mazeW*spaceing;
+            Bounds.Height = mazeH*spaceing;
+            Centre = new PointF(Bounds.Width/2, Bounds.Height/2);
+
             //i = x+y*width
             //y = i/width
             //x = i%width
@@ -146,6 +149,10 @@ namespace MazeGeneratorProject {
         private Cell[] createDeltaMesh(int Size, float spaceing) { //triangular
             List<Cell> vertices = new List<Cell>();
             int numNodes = (int)(0.5f*Size*(Size+1));
+
+            Bounds.Width = Size * spaceing;
+            Bounds.Height = (Size+1) * spaceing;
+            Centre = new PointF(Bounds.Width/2, Bounds.Height/2);
 
             int rowNumb = 0, colNumb = 0;
             for (int i = 0; i < numNodes; i++) {
@@ -186,6 +193,8 @@ namespace MazeGeneratorProject {
 
             return vertices.ToArray();
         }
+        
+        /*
         private Cell[] createThetaMesh(int Size, float spaceing) { //circle
             List<Cell> vertices = new List<Cell>();
             Size = (int)MathF.Sqrt(Size);
@@ -239,19 +248,20 @@ namespace MazeGeneratorProject {
 
             return vertices.ToArray();
         }
+        */
 
         //==solve==solve==solve==solve==solve==solve==
         /// <summary>
         /// Finds a solution to the maze
         /// </summary>
         /// <returns> A list of indexes showing the route taken between the start and end. </returns>
-        public int[] Solve() {
+        public int[] Solve(int destIndex, int startIndex) {
             List<Path> Paths = new List<Path>();
 
-            if (EndCell < 0 || EndCell > Cells.Length-1 || StartCell < 0 || StartCell > Cells.Length-1) { throw new Exception("Start/end cell is outside of maze."); }
+            if (destIndex < 0 || destIndex > Cells.Length-1 || startIndex < 0 || startIndex > Cells.Length-1) { throw new Exception("Start/end cell is outside of maze."); }
 
             Paths.Add(new Path());
-            Paths[0].Add(StartCell);
+            Paths[0].Add(startIndex);
 
             int loops = 0;
             while (Paths.Count > 0) {
@@ -259,7 +269,7 @@ namespace MazeGeneratorProject {
                 List<Path> pathsToRemove = new List<Path>();
                 foreach (Path p in Paths.ToList()) { //https://stackoverflow.com/a/604843
 
-                    if (p.Contains(EndCell)) { return p.ToArray(); }
+                    if (p.Contains(destIndex)) { return p.ToArray(); }
 
                     int lastCell = (p.Count >= 2)? p[p.Count-2] : -1;
                     Connection[] nextConnections = Cells[p[p.Count - 1]].NeighboursConnected.Where(n => n.NeighbourIndex != lastCell).ToArray();

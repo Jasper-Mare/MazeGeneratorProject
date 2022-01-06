@@ -30,36 +30,37 @@ namespace MazeGeneratorProject.Forms
         private void InitializeComponent()
         {
             this.bttn_back = new System.Windows.Forms.Button();
-            this.lbl_Username = new System.Windows.Forms.Label();
+            this.lbl_title = new System.Windows.Forms.Label();
             this.pnl_Options = new System.Windows.Forms.Panel();
             this.lbl_diff = new System.Windows.Forms.Label();
-            this.openFile_TemplateImage = new System.Windows.Forms.OpenFileDialog();
-            this.bar_difficulty = new System.Windows.Forms.PictureBox();
             this.bttn_GenMaze = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.bar_difficulty)).BeginInit();
+            this.LayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.LayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // bttn_back
             // 
-            this.bttn_back.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bttn_back.Location = new System.Drawing.Point(12, 398);
+            this.bttn_back.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bttn_back.Location = new System.Drawing.Point(3, 3);
             this.bttn_back.Name = "bttn_back";
-            this.bttn_back.Size = new System.Drawing.Size(303, 40);
+            this.bttn_back.Size = new System.Drawing.Size(382, 43);
             this.bttn_back.TabIndex = 0;
             this.bttn_back.Text = "Back to Main Menu";
             this.bttn_back.UseVisualStyleBackColor = true;
             this.bttn_back.Click += new System.EventHandler(this.Bttn_back_Click);
             // 
-            // lbl_Username
+            // lbl_title
             // 
-            this.lbl_Username.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbl_Username.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lbl_Username.Location = new System.Drawing.Point(12, 9);
-            this.lbl_Username.Name = "lbl_Username";
-            this.lbl_Username.Size = new System.Drawing.Size(303, 68);
-            this.lbl_Username.TabIndex = 2;
-            this.lbl_Username.Text = "Hello username";
-            this.lbl_Username.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_title.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbl_title.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbl_title.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lbl_title.Location = new System.Drawing.Point(12, 9);
+            this.lbl_title.Name = "lbl_title";
+            this.lbl_title.Size = new System.Drawing.Size(776, 68);
+            this.lbl_title.TabIndex = 2;
+            this.lbl_title.Text = "Custom Maze Options";
+            this.lbl_title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pnl_Options
             // 
@@ -67,58 +68,61 @@ namespace MazeGeneratorProject.Forms
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnl_Options.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnl_Options.Location = new System.Drawing.Point(321, 41);
+            this.pnl_Options.Location = new System.Drawing.Point(12, 116);
             this.pnl_Options.Name = "pnl_Options";
-            this.pnl_Options.Size = new System.Drawing.Size(467, 397);
+            this.pnl_Options.Size = new System.Drawing.Size(776, 276);
             this.pnl_Options.TabIndex = 3;
             // 
             // lbl_diff
             // 
             this.lbl_diff.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lbl_diff.Location = new System.Drawing.Point(321, 12);
+            this.lbl_diff.Location = new System.Drawing.Point(12, 90);
             this.lbl_diff.Name = "lbl_diff";
             this.lbl_diff.Size = new System.Drawing.Size(211, 23);
             this.lbl_diff.TabIndex = 4;
-            this.lbl_diff.Text = "Difficulty: ";
+            this.lbl_diff.Text = "This Maze is";
             this.lbl_diff.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // bar_difficulty
-            // 
-            this.bar_difficulty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.bar_difficulty.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.bar_difficulty.Location = new System.Drawing.Point(538, 9);
-            this.bar_difficulty.Name = "bar_difficulty";
-            this.bar_difficulty.Size = new System.Drawing.Size(250, 26);
-            this.bar_difficulty.TabIndex = 5;
-            this.bar_difficulty.TabStop = false;
             // 
             // bttn_GenMaze
             // 
-            this.bttn_GenMaze.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bttn_GenMaze.Location = new System.Drawing.Point(12, 352);
+            this.bttn_GenMaze.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bttn_GenMaze.Location = new System.Drawing.Point(391, 3);
             this.bttn_GenMaze.Name = "bttn_GenMaze";
-            this.bttn_GenMaze.Size = new System.Drawing.Size(303, 40);
+            this.bttn_GenMaze.Size = new System.Drawing.Size(382, 43);
             this.bttn_GenMaze.TabIndex = 6;
             this.bttn_GenMaze.Text = "Generate Maze";
             this.bttn_GenMaze.UseVisualStyleBackColor = true;
             this.bttn_GenMaze.Click += new System.EventHandler(this.bttn_GenMaze_Click);
             // 
-            // GenerateMaze
+            // LayoutPanel
+            // 
+            this.LayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.LayoutPanel.ColumnCount = 2;
+            this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.LayoutPanel.Controls.Add(this.bttn_back, 0, 0);
+            this.LayoutPanel.Controls.Add(this.bttn_GenMaze, 1, 0);
+            this.LayoutPanel.Location = new System.Drawing.Point(12, 398);
+            this.LayoutPanel.Name = "LayoutPanel";
+            this.LayoutPanel.RowCount = 1;
+            this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.LayoutPanel.Size = new System.Drawing.Size(776, 49);
+            this.LayoutPanel.TabIndex = 7;
+            // 
+            // MazeOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.bttn_GenMaze);
-            this.Controls.Add(this.bar_difficulty);
+            this.Controls.Add(this.LayoutPanel);
             this.Controls.Add(this.pnl_Options);
-            this.Controls.Add(this.lbl_Username);
-            this.Controls.Add(this.bttn_back);
+            this.Controls.Add(this.lbl_title);
             this.Controls.Add(this.lbl_diff);
-            this.Name = "GenerateMaze";
+            this.Name = "MazeOptions";
             this.Text = "GenerateMaze";
             this.Load += new System.EventHandler(this.GenerateMaze_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.bar_difficulty)).EndInit();
+            this.LayoutPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -126,11 +130,10 @@ namespace MazeGeneratorProject.Forms
         #endregion
 
         private System.Windows.Forms.Button bttn_back;
-        private System.Windows.Forms.Label lbl_Username;
+        private System.Windows.Forms.Label lbl_title;
         private System.Windows.Forms.Panel pnl_Options;
         private System.Windows.Forms.Label lbl_diff;
-        private System.Windows.Forms.OpenFileDialog openFile_TemplateImage;
-        private System.Windows.Forms.PictureBox bar_difficulty;
         private System.Windows.Forms.Button bttn_GenMaze;
+        private System.Windows.Forms.TableLayoutPanel LayoutPanel;
     }
 }

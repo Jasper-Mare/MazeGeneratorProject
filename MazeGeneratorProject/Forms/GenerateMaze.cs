@@ -250,10 +250,6 @@ namespace MazeGeneratorProject.Forms {
         private void CalculateDifficulty() {
             int difficultyPoints = 0;
             
-            if (drpdwn_GenType.SelectedIndex == (int)GeneratorOptions.GenerationType.Theta) { 
-                difficultyPoints += 1;
-            }
-
             if (chbx_Minotaur.Checked) { difficultyPoints += 1; }
             if (chbx_MovingWalls.Checked) { difficultyPoints += 1; }
             if (chbx_ReducedVisability.Checked) { difficultyPoints += 1; }
@@ -289,9 +285,6 @@ namespace MazeGeneratorProject.Forms {
             options.MovingWalls = chbx_MovingWalls.Checked;
             options.ReducedVisibility = chbx_ReducedVisability.Checked;
             
-            if (lbl_Template.Text == "No Template") { options.TemplateImg = null; } 
-            else { options.TemplateImg = new Bitmap(lbl_Template.Text); }
-
             options.BiasStrength = MathF.Pow(2, trkbr_bias.Value/2f);
             options.Size = 10*trkbr_size.Value;
             options.Diff = diff;

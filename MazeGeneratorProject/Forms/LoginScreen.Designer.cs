@@ -23,7 +23,7 @@
             this.txtbx_username.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtbx_username.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.txtbx_username.Location = new System.Drawing.Point(12, 112);
+            this.txtbx_username.Location = new System.Drawing.Point(12, 171);
             this.txtbx_username.Name = "txtbx_username";
             this.txtbx_username.Size = new System.Drawing.Size(637, 26);
             this.txtbx_username.TabIndex = 1;
@@ -47,7 +47,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.bttn_login.BackColor = System.Drawing.SystemColors.Control;
             this.bttn_login.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.bttn_login.Location = new System.Drawing.Point(12, 144);
+            this.bttn_login.Location = new System.Drawing.Point(12, 203);
             this.bttn_login.Name = "bttn_login";
             this.bttn_login.Size = new System.Drawing.Size(637, 29);
             this.bttn_login.TabIndex = 3;
@@ -60,7 +60,7 @@
             this.lbl_usernameRules.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbl_usernameRules.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lbl_usernameRules.Location = new System.Drawing.Point(12, 190);
+            this.lbl_usernameRules.Location = new System.Drawing.Point(12, 110);
             this.lbl_usernameRules.Name = "lbl_usernameRules";
             this.lbl_usernameRules.Size = new System.Drawing.Size(637, 58);
             this.lbl_usernameRules.TabIndex = 4;

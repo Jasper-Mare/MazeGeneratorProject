@@ -13,66 +13,19 @@ namespace MazeGeneratorProject.Forms {
         }
 
         private void MainMenu_Load(object sender,EventArgs e) {
-            lbl_Username.Font = StyleSheet.Headings;
+            lbl_Title.Font = StyleSheet.Headings;
             bttn_LogOut.Font = StyleSheet.Body;
-            bttn_generate.Font = StyleSheet.Body;
+            bttn_custom.Font = StyleSheet.Body;
+            bttn_easy.Font = StyleSheet.Body;
+            bttn_medium.Font = StyleSheet.Body;
+            bttn_difficult.Font = StyleSheet.Body;
             bttn_setMovement.Font = StyleSheet.Body;
-            tbctl_Graphs.Font = StyleSheet.Body;
+            bttn_graphs.Font = StyleSheet.Body;
 
-            for(int i = 0; i < (int)Difficulty.Count; i++) {
-                TabPage page = new TabPage();
-
-                PictureBox tmpltPicBox = new PictureBox();
-                tmpltPicBox.SizeMode = PictureBoxSizeMode.Zoom;
-                tmpltPicBox.Dock = DockStyle.Fill;
-                page.Controls.Add(tmpltPicBox);
-
-                page.Text = ((Difficulty)i).ToString();
-                tbctl_Graphs.TabPages.Add(page);
-            }
-
-            //impersonate the tabpage.selected event
-            tbctl_Graphs_Selected(tbctl_Graphs,new TabControlEventArgs(tbctl_Graphs.TabPages[0],0,TabControlAction.Selected));
-        }
-
-        private void tbctl_Graphs_Selected(object sender,TabControlEventArgs e) {
-            PictureBox picbox = (PictureBox)e.TabPage.Controls[0];
-
-            const int w = 1600, h = 900;
-            if(picbox.Image == null) { picbox.Image = new Bitmap(w,h); }
-            Graphics gfx = Graphics.FromImage(picbox.Image);
-            gfx.Clear(SystemColors.ControlDark);
-            gfx.DrawRectangle(new Pen(SystemColors.ControlLight,3),1,1,w-1,h-1);
-
-            Pen linePen = new Pen(Color.OrangeRed, 3);
-            int timesDiff = e.TabPageIndex;
-            if(user.Times[timesDiff] == null || user.Times[timesDiff].Count == 0) {
-                gfx.DrawString("You haven't solved any mazes on this difficulty yet.",StyleSheet.Headings,Brushes.Black,new Point(w/6,h/2-15));
-            } else {
-                List<float> values = user.Times[timesDiff].ToList();
-
-                if(values.Count == 1) { values.Add(values[0]); }
-
-                //x and y scaleing factor
-                float ySfact = (h-100)/values.Max();
-                float xSfact = (w-150)/(values.Count-1);
-                //write y axis values
-                for(int y = 0; y <= h-100; y += 50) {
-                    gfx.DrawString((y/ySfact).ToString("F2"),StyleSheet.Body,Brushes.Black,10,h-y-60);
-                    gfx.DrawLine(SystemPens.ControlLight,100,h-y-50,w-50,h-y-50);
-                }
-                int y1 = h-(int)(values[0]*ySfact)-50;
-                for(int x = 1; x < values.Count; x++) {
-                    int y2 = h-(int)(values[x]*ySfact)-50;
-                    gfx.DrawLine(linePen,(x-1)*xSfact+100,y1,x*xSfact+100,y2);
-                    y1 = y2;
-                }
-            }
-
-            linePen.Color = Color.Black;
-            gfx.DrawLine(linePen,100,50,100,h-50);
-            gfx.DrawLine(linePen,100,h-50,w-50,h-50);
-
+            lbl_keyUp.Text = "Up: "+user.KeyUp.ToString();
+            lbl_keyDown.Text = "Down: "+user.KeyDown.ToString();
+            lbl_keyLeft.Text = "Left: "+user.KeyLeft.ToString();
+            lbl_keyRight.Text = "Right: "+user.KeyRight.ToString();
         }
 
         private void bttn_LogOut_Click(object sender,EventArgs e) {
@@ -81,15 +34,53 @@ namespace MazeGeneratorProject.Forms {
             }
         }
 
-        private void bttn_generate_Click(object sender,EventArgs e) {
-            Program.AppWindow.SetActiveForm(new MazeOptions(user));
-        }
-
         private void bttn_setMovement_Click(object sender,EventArgs e) {
             SetInputKeys setInput = new SetInputKeys(user);
             setInput.ShowDialog(this);
             user = setInput.User;
             user.SaveToFile();
+            lbl_keyUp.Text = "Up: " + user.KeyUp.ToString();
+            lbl_keyDown.Text = "Down: " + user.KeyDown.ToString();
+            lbl_keyLeft.Text = "Left: " + user.KeyLeft.ToString();
+            lbl_keyRight.Text = "Right: " + user.KeyRight.ToString();
+        }
+
+        private void bttn_graphs_Click(object sender, EventArgs e) {
+            Program.AppWindow.SetActiveForm(new Graphs(user));
+        }
+
+        private void bttn_generate_Click(object sender,EventArgs e) {
+            Program.AppWindow.SetActiveForm(new MazeOptions(user));
+        }
+
+        private void bttn_easy_Click(object sender, EventArgs e) {
+            GeneratorOptions preset = new GeneratorOptions();
+            preset.Diff = Difficulty.Easy;
+            preset.Appearance = StyleSheet.MazeStyles[0];
+            preset.BiasStrength = 1;
+            preset.Size = 30;
+            preset.GenerationType = GeneratorOptions._GenerationType.Gamma;
+            Program.AppWindow.SetActiveForm(new MazeForm(user, preset));
+        }
+
+        private void bttn_medium_Click(object sender, EventArgs e) {
+            GeneratorOptions preset = new GeneratorOptions();
+            preset.Diff = Difficulty.Medium;
+            preset.Appearance = StyleSheet.MazeStyles[0];
+            preset.BiasStrength = 1;
+            preset.Size = 60;
+            preset.GenerationType = GeneratorOptions._GenerationType.Gamma;
+            Program.AppWindow.SetActiveForm(new MazeForm(user, preset));
+        }
+
+        private void bttn_difficult_Click(object sender, EventArgs e) {
+            GeneratorOptions preset = new GeneratorOptions();
+            preset.Diff = Difficulty.Hard;
+            preset.Appearance = StyleSheet.MazeStyles[0];
+            preset.BiasStrength = 1;
+            preset.Size = 100;
+            preset.GenerationType = GeneratorOptions._GenerationType.Gamma;
+            Program.AppWindow.SetActiveForm(new MazeForm(user, preset));
         }
     }
 }

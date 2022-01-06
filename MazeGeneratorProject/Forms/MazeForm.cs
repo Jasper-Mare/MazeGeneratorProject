@@ -25,6 +25,7 @@ namespace MazeGeneratorProject.Forms {
 
         InterpolationMode interpMode = InterpolationMode.NearestNeighbor;
         PointF cameraPos;
+        float cameraZoom;
         #endregion
 
         Stopwatch userTime = new Stopwatch();
@@ -41,9 +42,10 @@ namespace MazeGeneratorProject.Forms {
         bool solved = false;
         bool exitLocked;
 
-        bool keySelectPressed = false;
-        bool keyCWPressed = false;
-        bool keyCCWPressed = false;
+        bool keyUpPressed = false;
+        bool keyDownPressed = false;
+        bool keyRightPressed = false;
+        bool keyLeftPressed = false;
 
         struct marker {
             public static int currentCellIndex;
@@ -66,10 +68,11 @@ namespace MazeGeneratorProject.Forms {
             lbl_Username.Font = StyleSheet.Body;
             lbl_Username.Text = user.Name;
             lbl_timer.Font = StyleSheet.Body;
+            bttn_pause.Font = StyleSheet.Body;
+            bttn_resume.Font = StyleSheet.Body;
+            bttn_returnToMenu.Font = StyleSheet.Body;
 
             lbl_paused.Font = StyleSheet.Headings;
-            bttn_return.Font = StyleSheet.Headings;
-            bttn_return.Click += Bttn_return_Click;
 
             Canvas.InterpolationMode = interpMode;
             Canvas.Image = image;
@@ -88,8 +91,6 @@ namespace MazeGeneratorProject.Forms {
         private void MazeForm_Shown(object sender, EventArgs e) { //runs after the form has loaded and appeared.
             bttn_Start.Text = "Loading...";
             bttn_Start.Enabled = false;
-
-            bttn_return.Hide();
 
             maze = new Maze();
             maze.Generate(options);
@@ -116,6 +117,9 @@ namespace MazeGeneratorProject.Forms {
             Canvas.Paint += Canvas_Paint;
             userTime.Start();
 
+            cameraPos = maze.Centre;
+            cameraZoom = 500/(maze.Bounds.Width); //new PointF(1/(maze.Bounds.Width), 1/maze.Bounds.Height);
+
             bttn_Start.Hide();
         }
 
@@ -123,25 +127,20 @@ namespace MazeGeneratorProject.Forms {
             float deltaT = frameTimer.ElapsedMilliseconds / 1000f;
             frameTimer.Restart();
             
-            if (paused || solved) {
-                if (solved && !bttn_return.Visible) {
-                    bttn_return.Show();
-                }
-            } else {
+            if (!(paused || solved)) {
                 lbl_timer.Text = "Time: " + userTime.Elapsed.ToString(@"hh\:mm\:ss\:f");
 
                 Brush psgBrsh = options.Appearance.PassageBrush;
                 int psgW = options.Appearance.PassageW;
 
                 Point markerPos = new Point((int)(maze.Cells[marker.currentCellIndex].X + (maze.Cells[marker.nextCellIndex].X - maze.Cells[marker.currentCellIndex].X) * marker.proportionAlongPassage - psgW / 2), (int)(maze.Cells[marker.currentCellIndex].Y + (maze.Cells[marker.nextCellIndex].Y - maze.Cells[marker.currentCellIndex].Y) * marker.proportionAlongPassage - psgW / 2));
-                cameraPos = markerPos; cameraPos.X += psgW/2; cameraPos.Y += psgW / 2;
-
+                
                 gfx.FillRectangle(options.Appearance.WallBrush, 0,0, width, height);
                 gfx.ResetClip();
                 gfx.TranslateTransform(width/2, height/2);
+                gfx.ScaleTransform(cameraZoom, cameraZoom);
                 gfx.TranslateTransform(-cameraPos.X, -cameraPos.Y);
-                gfx.SetClip(new Rectangle((int)cameraPos.X-width/2, (int)cameraPos.Y-height/2, width, height));
-                //gfx.ScaleTransform(0.5f,0.5f);
+                gfx.SetClip(new Rectangle((int)cameraPos.X-(int)(width/(2*cameraZoom)), (int)cameraPos.Y-(int)(Height/(2*cameraZoom)), (int)(width/cameraZoom), (int)(height/cameraZoom)));
                 //https://www.vbforums.com/showthread.php?624596-RESOLVED-Offsetting-a-HatchBrush
                 gfx.RenderingOrigin = new Point((int)cameraPos.X, (int)cameraPos.Y);
                 
@@ -184,7 +183,7 @@ namespace MazeGeneratorProject.Forms {
 
                 //draw marker
                 gfx.FillEllipse(Brushes.Green, markerPos.X, markerPos.Y, psgW, psgW);
-                if (marker.state == marker.stateType.waiting) {
+                if (marker.state == marker.stateType.waiting && options.GenerationType == GeneratorOptions._GenerationType.Delta) {
                     Pen p = new Pen(Color.Yellow, 5);
                     AdjustableArrowCap arrowCap = new AdjustableArrowCap(5,5);
                     p.CustomEndCap = arrowCap;
@@ -203,6 +202,12 @@ namespace MazeGeneratorProject.Forms {
                 //    gfx.DrawString(movestack[i].ToString(), SystemFonts.DefaultFont, Brushes.Orange, new PointF(10, i*10+10));
                 //}
 
+            } else if (solved) {
+                bttn_pause.Hide();
+                pnl_pausedMenu.Show();
+                lbl_paused.Text = "You Have Solved The Maze";
+                bttn_resume.Hide(); //stop drawing
+                return;
             }
                         
             Canvas.Invalidate();
@@ -229,8 +234,13 @@ namespace MazeGeneratorProject.Forms {
             updateTimer.Restart();
 
             //marker movement
-            if (marker.state == marker.stateType.moving) { marker.proportionAlongPassage += deltaT*marker.speed; }
-            if (!exitLocked && marker.currentCellIndex == maze.EndCell) { solved = true; return; } //maze is solved, so leave this function before it is re-enabled
+            if (marker.state == marker.stateType.moving) { 
+                marker.proportionAlongPassage += deltaT*marker.speed;
+            }
+            if (!exitLocked && marker.currentCellIndex == maze.EndCell) { 
+                solved = true;
+                return; //maze is solved, so leave this function before it is re-enabled
+            } 
             
             if (marker.proportionAlongPassage >= 1) {
                 marker.proportionAlongPassage = 0;
@@ -255,20 +265,74 @@ namespace MazeGeneratorProject.Forms {
             }
 
             if (marker.state == marker.stateType.waiting) {
-                int numDir = maze.Cells[marker.currentCellIndex].NeighboursConnected.Length;
-                if (keySelectPressed) {
-                    marker.proportionAlongPassage = 0;
-                    marker.nextCellIndex = maze.Cells[marker.currentCellIndex].NeighboursConnected[selectedDirection].NeighbourIndex;
-                    marker.state = marker.stateType.moving;
-                    keySelectPressed = false;
-                }
-                if (keyCWPressed) { //index+
-                    selectedDirection = (selectedDirection+numDir+1)%numDir;
-                    keyCWPressed = false;
-                }
-                if (keyCCWPressed) { //index-
-                    selectedDirection = (selectedDirection+numDir-1)%numDir;
-                    keyCCWPressed = false;
+                if (options.GenerationType == GeneratorOptions._GenerationType.Delta) { 
+                    int numDir = maze.Cells[marker.currentCellIndex].NeighboursConnected.Length;
+                    if (keyUpPressed) {
+                        marker.proportionAlongPassage = 0;
+                        marker.nextCellIndex = maze.Cells[marker.currentCellIndex].NeighboursConnected[selectedDirection].NeighbourIndex;
+                        marker.state = marker.stateType.moving;
+                        keyUpPressed = false;
+                    }
+                    if (keyRightPressed) { //index+
+                        selectedDirection = (selectedDirection+numDir+1)%numDir;
+                        keyRightPressed = false;
+                    }
+                    if (keyLeftPressed) { //index-
+                        selectedDirection = (selectedDirection+numDir-1)%numDir;
+                        keyLeftPressed = false;
+                    }
+                } else {
+                    int missingEntries = 0;
+
+                    if (maze.Cells[marker.currentCellIndex].Up) { 
+                        if (keyUpPressed) {
+                            if (maze.Cells[marker.currentCellIndex].Neighbours[0].Connected) {
+                                marker.proportionAlongPassage = 0;
+                                marker.nextCellIndex = maze.Cells[marker.currentCellIndex].Neighbours[0].NeighbourIndex;
+                                marker.state = marker.stateType.moving;
+                                keyUpPressed = false;
+                            }
+                        }
+                    } else {
+                        missingEntries++;
+                    }
+                    if (maze.Cells[marker.currentCellIndex].Right) { 
+                        if (keyRightPressed) { 
+                            if (maze.Cells[marker.currentCellIndex].Neighbours[1-missingEntries].Connected) {
+                                marker.proportionAlongPassage = 0;
+                                marker.nextCellIndex = maze.Cells[marker.currentCellIndex].Neighbours[1-missingEntries].NeighbourIndex;
+                                marker.state = marker.stateType.moving;
+                                keyRightPressed = false;
+                            }
+                        }
+                    } else {
+                        missingEntries++;
+                    }
+                    if (maze.Cells[marker.currentCellIndex].Down) { 
+                        if (keyDownPressed) { 
+                            if (maze.Cells[marker.currentCellIndex].Neighbours[2-missingEntries].Connected) {
+                                marker.proportionAlongPassage = 0;
+                                marker.nextCellIndex = maze.Cells[marker.currentCellIndex].Neighbours[2-missingEntries].NeighbourIndex;
+                                marker.state = marker.stateType.moving;
+                                keyDownPressed = false;
+                            }
+                        }
+                    } else {
+                        missingEntries++;
+                    }
+                    if (maze.Cells[marker.currentCellIndex].Left) { 
+                        if (keyLeftPressed) { 
+                            if (maze.Cells[marker.currentCellIndex].Neighbours[3-missingEntries].Connected) {
+                                marker.proportionAlongPassage = 0;
+                                marker.nextCellIndex = maze.Cells[marker.currentCellIndex].Neighbours[3-missingEntries].NeighbourIndex;
+                                marker.state = marker.stateType.moving;
+                                keyLeftPressed = false;
+                            }
+                        }
+                    } else {
+                        missingEntries++;
+                    }
+
                 }
             }
 
@@ -279,17 +343,6 @@ namespace MazeGeneratorProject.Forms {
                     marker.pastLocations.Push(marker.nextCellIndex);
                 }
             }
-
-            //if (options.MovingWalls && deltaT > 0 && rng.Next(0, (int)(10/deltaT)) == 0) {
-            //    int cell1 = rng.Next(0, maze.Cells.Length);
-            //    int cell2 = rng.Next(0, maze.Cells[cell1].NeighboursConnected.Length);
-
-            //    PointF p1 = maze.Cells[cell1].Position;
-            //    PointF p2 = maze.Cells[maze.Cells[cell1].NeighboursConnected[cell2].NeighbourIndex].Position;
-
-            //    maze.Cells[cell1].Position = p2;
-            //    maze.Cells[maze.Cells[cell1].NeighboursConnected[cell2].NeighbourIndex].Position = p1;
-            //}
 
             if (options.MovingWalls) {
                 bool hideWalls = (deltaT > 0 && rng.Next(0,(int)(10/deltaT)) == 0);
@@ -317,19 +370,38 @@ namespace MazeGeneratorProject.Forms {
         }
 
         private void KeyPressed(object sender, KeyEventArgs e) {
-            if (e.KeyCode == user.KeyRight    ) { keyCWPressed = true; }
-            if (e.KeyCode == user.KeyLeft   ) { keyCCWPressed = true; }
+            if (e.KeyCode == user.KeyUp) { keyUpPressed = true; }
+            if (e.KeyCode == user.KeyDown) { keyDownPressed = true; }
+            if (e.KeyCode == user.KeyLeft) { keyLeftPressed = true; }
+            if (e.KeyCode == user.KeyRight) { keyRightPressed = true; }
         }
         private void KeyUnpressed(object sender, KeyEventArgs e) {
-            if (e.KeyCode == user.KeyUp) { keySelectPressed = true; }
-            if (e.KeyCode == Keys.Escape) { paused = !paused; if (paused) { userTime.Stop(); pnl_pausedMenu.Show(); } else { userTime.Start(); pnl_pausedMenu.Hide(); } } //toggle paused
+            if (e.KeyCode == user.KeyUp) { keyUpPressed = false; }
+            if (e.KeyCode == user.KeyDown) { keyDownPressed = false; }
+            if (e.KeyCode == user.KeyLeft) { keyLeftPressed = false; }
+            if (e.KeyCode == user.KeyRight) { keyRightPressed = false; }
+            if (e.KeyCode == Keys.Escape) { togglePause(); } //toggle paused
         }
 
-        private void bttn_GiveUp_Click(object sender, EventArgs e) {
-            MazeDone(true);
+        private void bttn_return_Click(object sender, EventArgs e) {
+            MazeDone(!solved);
         }
-        private void Bttn_return_Click(object sender, EventArgs e) {
-            MazeDone(false);
+        private void bttn_pause_Click(object sender, EventArgs e) {
+            togglePause();
+        }
+
+        void togglePause() {
+            paused = !paused; 
+            if (paused) { 
+                userTime.Stop(); 
+                pnl_pausedMenu.Show();
+                bttn_pause.Text = "Resume";
+            } else { 
+                userTime.Start(); 
+                pnl_pausedMenu.Hide();
+                bttn_pause.Text = "Pause";
+            }
+
         }
 
         void MazeDone(bool gaveUp) {
