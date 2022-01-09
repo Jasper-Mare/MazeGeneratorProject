@@ -18,7 +18,7 @@ namespace MazeGeneratorProject {
             //=======================================|| A way for me to skip to a different form during coding
             //User me;
             //User.ReadUserFromFile(0, out me);
-            //appWindow = new ApplicationWindow(new Forms.MazeOptions(me));
+            //AppWindow = new ApplicationWindow(new Forms.MazeOptions(me));
             //=======================================||
 
             Application.Run(AppWindow);

@@ -134,6 +134,7 @@ namespace MazeGeneratorProject.Forms
             this.bttn_resume.TabIndex = 2;
             this.bttn_resume.Text = "Resume";
             this.bttn_resume.UseVisualStyleBackColor = true;
+            this.bttn_resume.Click += new System.EventHandler(this.bttn_resume_Click);
             // 
             // lbl_paused
             // 

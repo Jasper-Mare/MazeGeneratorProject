@@ -68,7 +68,7 @@ namespace MazeGeneratorProject.Forms {
             preset.Diff = Difficulty.Medium;
             preset.Appearance = StyleSheet.MazeStyles[0];
             preset.BiasStrength = 1;
-            preset.Size = 60;
+            preset.Size = 50;
             preset.GenerationType = GeneratorOptions._GenerationType.Gamma;
             Program.AppWindow.SetActiveForm(new MazeForm(user, preset));
         }
@@ -78,7 +78,7 @@ namespace MazeGeneratorProject.Forms {
             preset.Diff = Difficulty.Hard;
             preset.Appearance = StyleSheet.MazeStyles[0];
             preset.BiasStrength = 1;
-            preset.Size = 100;
+            preset.Size = 70;
             preset.GenerationType = GeneratorOptions._GenerationType.Gamma;
             Program.AppWindow.SetActiveForm(new MazeForm(user, preset));
         }

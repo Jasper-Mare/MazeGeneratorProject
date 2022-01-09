@@ -37,6 +37,7 @@ namespace MazeGeneratorProject.Forms {
         Maze maze;
 
         Bitmap shadow;
+        Size shadowSize = new Size(600,600);
 
         bool paused = false;
         bool solved = false;
@@ -51,12 +52,20 @@ namespace MazeGeneratorProject.Forms {
             public static int currentCellIndex;
             public static int nextCellIndex;
             public static float proportionAlongPassage;
-            public static readonly float speed = 2f;
+            public const float speed = 2f;
             public static Stack<int> pastLocations = new Stack<int>();
             public enum stateType { waiting, moving }
             public static stateType state = stateType.waiting;
         }
         int selectedDirection;
+
+        struct minotaur {
+            public static List<int> path = new List<int>();
+            public static float proportionAlongPassage;
+            public const float speed = 1.8f;
+            public static float hearingRange;
+            public static bool heardUser;
+        }
 
         public MazeForm(User user, GeneratorOptions options) {
             InitializeComponent();
@@ -86,6 +95,7 @@ namespace MazeGeneratorProject.Forms {
             gfx.InterpolationMode = interpMode;
             gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
 
+            minotaur.path.Clear();
         }
 
         private void MazeForm_Shown(object sender, EventArgs e) { //runs after the form has loaded and appeared.
@@ -118,7 +128,13 @@ namespace MazeGeneratorProject.Forms {
             userTime.Start();
 
             cameraPos = maze.Centre;
-            cameraZoom = 500/(maze.Bounds.Width); //new PointF(1/(maze.Bounds.Width), 1/maze.Bounds.Height);
+            cameraZoom = 650/MathF.Max(maze.Bounds.Width, maze.Bounds.Height); //new PointF(1/(maze.Bounds.Width), 1/maze.Bounds.Height);
+
+            if (options.Minotaur) {
+                Random rng = new Random();
+                minotaur.path.Add(rng.Next(0, maze.Cells.Length));
+                minotaur.hearingRange = options.Appearance.PassageW*MathF.Pow(1.03f,0.6f*options.Size+50);
+            }
 
             bttn_Start.Hide();
         }
@@ -132,15 +148,15 @@ namespace MazeGeneratorProject.Forms {
 
                 Brush psgBrsh = options.Appearance.PassageBrush;
                 int psgW = options.Appearance.PassageW;
+                Point markerPos = LerpPos(maze.Cells[marker.currentCellIndex].Position, maze.Cells[marker.nextCellIndex].Position, marker.proportionAlongPassage);
+                markerPos.X -= psgW / 2; markerPos.Y -= psgW / 2;
 
-                Point markerPos = new Point((int)(maze.Cells[marker.currentCellIndex].X + (maze.Cells[marker.nextCellIndex].X - maze.Cells[marker.currentCellIndex].X) * marker.proportionAlongPassage - psgW / 2), (int)(maze.Cells[marker.currentCellIndex].Y + (maze.Cells[marker.nextCellIndex].Y - maze.Cells[marker.currentCellIndex].Y) * marker.proportionAlongPassage - psgW / 2));
-                
                 gfx.FillRectangle(options.Appearance.WallBrush, 0,0, width, height);
                 gfx.ResetClip();
                 gfx.TranslateTransform(width/2, height/2);
                 gfx.ScaleTransform(cameraZoom, cameraZoom);
                 gfx.TranslateTransform(-cameraPos.X, -cameraPos.Y);
-                gfx.SetClip(new Rectangle((int)cameraPos.X-(int)(width/(2*cameraZoom)), (int)cameraPos.Y-(int)(Height/(2*cameraZoom)), (int)(width/cameraZoom), (int)(height/cameraZoom)));
+                //if (options.ReducedVisibility) { gfx.SetClip(new Rectangle(markerPos.X-shadow.Width/2+1,markerPos.Y-shadow.Height/2+1, shadow.Width-2, shadow.Height-2)); }
                 //https://www.vbforums.com/showthread.php?624596-RESOLVED-Offsetting-a-HatchBrush
                 gfx.RenderingOrigin = new Point((int)cameraPos.X, (int)cameraPos.Y);
                 
@@ -169,7 +185,6 @@ namespace MazeGeneratorProject.Forms {
                     gfx.FillEllipse(Brushes.Red, maze.Cells[maze.EndCell].X-psgW/2, maze.Cells[maze.EndCell].Y-psgW/2, psgW, psgW);
                 }
                 
-
                 if (options.Keys) {
                     foreach (int keyLoc in maze.Keys.Where(k => k != -1)) {
                         gfx.FillEllipse(Brushes.Gold, maze.Cells[keyLoc].X - psgW / 2, maze.Cells[keyLoc].Y - psgW / 2, psgW, psgW);
@@ -191,11 +206,67 @@ namespace MazeGeneratorProject.Forms {
                     gfx.DrawLine(p, maze.Cells[marker.currentCellIndex].Position, maze.Cells[maze.Cells[marker.currentCellIndex].NeighboursConnected[selectedDirection].NeighbourIndex].Position);
                 }
 
-                gfx.ResetTransform();
+
+                if (options.Minotaur) {
+                    int[] pathcopy = minotaur.path.ToArray();
+                    PointF minotaurPos;
+                    if (pathcopy.Count() >= 2) { 
+                        minotaurPos = LerpPos(maze.Cells[pathcopy[0]].Position, maze.Cells[pathcopy[1]].Position, minotaur.proportionAlongPassage);
+                    } else {
+                        minotaurPos = maze.Cells[pathcopy[0]].Position;
+                    }
+                    minotaurPos.X -= psgW/2; minotaurPos.Y -= psgW/2;
+                    
+                    gfx.FillEllipse(Brushes.Blue, minotaurPos.X, minotaurPos.Y, psgW, psgW);
+                    if (minotaur.heardUser) {
+                        gfx.DrawEllipse(Pens.Red, minotaurPos.X+2, minotaurPos.Y+2, psgW-4, psgW-4);
+                    }
+
+                    //foreach (int i in pathcopy.ToArray()) {
+                    //    gfx.FillEllipse(Brushes.Brown, maze.Cells[i].X-psgW/2+3, maze.Cells[i].Y-psgW/2+3, psgW-6, psgW-6);
+                    //}
+                }
 
                 if (options.ReducedVisibility) {
-                    gfx.DrawImageUnscaled(shadow, 0,0);
+                    Region darkArea = new Region(new Rectangle((int)(maze.Centre.X-maze.Bounds.Width), (int)(maze.Centre.Y-maze.Bounds.Width), (int)maze.Bounds.Width*2, (int)maze.Bounds.Height*2));
+                    GraphicsPath circle = new GraphicsPath();
+
+                    //gfx.DrawImageUnscaled(shadow, (int)maze.Cells[maze.EndCell].X-shadow.Width/2,(int)maze.Cells[maze.EndCell].Y-shadow.Height/2); //exit
+                    circle.AddEllipse((int)maze.Cells[maze.EndCell].X-shadowSize.Width/2,(int)maze.Cells[maze.EndCell].Y-shadowSize.Height/2, shadowSize.Width, shadowSize.Height);
+                    darkArea.Exclude(circle);
+                    circle.ClearMarkers();
+                    if (options.Keys) {
+                        foreach (int keyLoc in maze.Keys.Where(k => k != -1)) {
+                            //gfx.DrawImageUnscaled(shadow, (int)maze.Cells[keyLoc].X-shadow.Width/2, (int)maze.Cells[keyLoc].Y-shadow.Height/2); //keys
+                            circle.AddEllipse((int)maze.Cells[keyLoc].X-shadowSize.Width/2, (int)maze.Cells[keyLoc].Y-shadowSize.Height/2, shadowSize.Width, shadowSize.Height);
+                            darkArea.Exclude(circle);
+                            circle.ClearMarkers();
+                        }
+                    }
+
+                    if (options.Minotaur) {
+                        int[] pathcopy = minotaur.path.ToArray();
+                        PointF minotaurPos;
+                        if (pathcopy.Count() >= 2) { 
+                            minotaurPos = LerpPos(maze.Cells[pathcopy[0]].Position, maze.Cells[pathcopy[1]].Position, minotaur.proportionAlongPassage);
+                        } else {
+                            minotaurPos = maze.Cells[pathcopy[0]].Position;
+                        }
+                        minotaurPos.X -= psgW/2; minotaurPos.Y -= psgW/2;
+                        //gfx.DrawImageUnscaled(shadow, (int)minotaurPos.X-shadow.Width/2, (int)minotaurPos.Y-shadow.Height/2); //minotaur
+                        circle.AddEllipse((int)minotaurPos.X-shadowSize.Width/2, (int)minotaurPos.Y-shadowSize.Height/2, shadowSize.Width, shadowSize.Height);
+                        darkArea.Exclude(circle);
+                        circle.ClearMarkers();
+                    }
+                    //gfx.DrawImageUnscaled(shadow, markerPos.X-shadow.Width/2,markerPos.Y-shadow.Height/2); //player
+                    circle.AddEllipse(markerPos.X-shadowSize.Width/2,markerPos.Y-shadowSize.Height/2, shadowSize.Width, shadowSize.Height);
+                    darkArea.Exclude(circle);
+
+                    darkArea.Translate(options.Appearance.PassageW/2f, options.Appearance.PassageW/2f);
+                    gfx.FillRegion(Brushes.Black, darkArea);
                 }
+
+                gfx.ResetTransform();
 
                 //debug the stack
                 //for (int i = 0; i < movestack.Length; i++) {
@@ -211,6 +282,11 @@ namespace MazeGeneratorProject.Forms {
             }
                         
             Canvas.Invalidate();
+        }
+
+        Point LerpPos(PointF a, PointF b, float p) {
+            return new Point((int)(a.X + (b.X - a.X) * p), (int)(a.Y + (b.Y - a.Y) * p));
+
         }
 
         Point[] LineToPolygon(PointF p1, PointF p2, float width) {
@@ -354,19 +430,61 @@ namespace MazeGeneratorProject.Forms {
                     pos.Y += ((float)rng.NextDouble()-0.5f)*0.5f;
                     maze.Cells[i].Position = pos;
 
-                    if (showWalls) {
-                        for (int index = 0; index < maze.Cells[i].Neighbours.Length; index++) {
-                            maze.Cells[i].Neighbours[index].hidden = false;
-                        }
-                    } else if (hideWalls) {
-                        int index = rng.Next(0, maze.Cells[i].Neighbours.Length);
-                        maze.Cells[i].Neighbours[index].hidden = !maze.Cells[i].Neighbours[index].hidden;
-                    }
+                    //if (showWalls) {
+                    //    for (int index = 0; index < maze.Cells[i].Neighbours.Length; index++) {
+                    //        maze.Cells[i].Neighbours[index].hidden = false;
+                    //    }
+                    //} else if (hideWalls) {
+                    //    int index = rng.Next(0, maze.Cells[i].Neighbours.Length);
+                    //    maze.Cells[i].Neighbours[index].hidden = !maze.Cells[i].Neighbours[index].hidden;
+                    //}
+                }
+
+            }
+
+            if (options.Minotaur) {
+                minotaur.proportionAlongPassage += deltaT * minotaur.speed;
+                if (minotaur.proportionAlongPassage >= 1) {
+                    if (minotaur.path.Count > 1) { minotaur.path.RemoveAt(0); }
+                    minotaur.proportionAlongPassage = 0; 
+                }
+
+                if (minotaur.path[0] == marker.currentCellIndex) {
+                    marker.currentCellIndex = maze.StartCell;
+                    marker.nextCellIndex = maze.StartCell;
+                    marker.state = marker.stateType.waiting;
+                    selectedDirection = 0;
+                    marker.pastLocations.Clear();
+                    marker.pastLocations.Push(maze.StartCell);
+                }
+
+                //hearing the user
+                minotaur.heardUser = (marker.state == marker.stateType.moving && distSq(maze.Cells[minotaur.path[0]].Position, maze.Cells[marker.currentCellIndex].Position) <= minotaur.hearingRange*minotaur.hearingRange);
+
+                if (minotaur.path.Count == 1) {
+                    List<int> tmp = minotaur.path;
+                    int current = tmp[0], next = (tmp.Count >= 2)? tmp[1] : tmp[0];
+                    tmp.Clear();
+                    tmp.Add(current);
+                    tmp.AddRange(maze.Solve(rng.Next(0, maze.Cells.Length), next));
+                    minotaur.path = tmp;
+                }
+                if (minotaur.heardUser) {
+                    List<int> tmp = minotaur.path;
+                    int current = tmp[0], next = (tmp.Count >= 2) ? tmp[1] : tmp[0];
+                    tmp.Clear();
+                    tmp.Add(current);
+                    tmp.AddRange(maze.Solve(marker.nextCellIndex, next));
+                    minotaur.path = tmp;
                 }
 
             }
 
             updater.Enabled = true;
+        }
+
+        float distSq(PointF a, PointF b) { //square root function is performance heavy, so I square the compared distance instead of squarerooting the actual distance^2
+            return (a.X-b.X)*(a.X-b.X)+(a.Y-b.Y)*(a.Y-b.Y);
         }
 
         private void KeyPressed(object sender, KeyEventArgs e) {
@@ -418,6 +536,9 @@ namespace MazeGeneratorProject.Forms {
             Program.AppWindow.SetActiveForm(new Forms.MainMenu(user));
         }
 
+        private void bttn_resume_Click(object sender, EventArgs e) {
+            togglePause();
+        }
     }
 
 

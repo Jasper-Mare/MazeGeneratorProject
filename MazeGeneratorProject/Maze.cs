@@ -91,7 +91,7 @@ namespace MazeGeneratorProject {
                 for (int i = 0; i < groups.Count; i++) {
                     if (groups[i].Contains(cell2Index)) { group2Index = i; break; }
                 }
-                if (group2Index == -1) { throw new Exception("group2 not found."); }
+                if (group2Index == -1) { continue; }
                 //merge them
                 groups[group1Index].AddRange(groups[group2Index]); //add into group1
                 groups.RemoveAt(group2Index); //remove group2
@@ -117,8 +117,8 @@ namespace MazeGeneratorProject {
             int mazeW = Size;
             int mazeH = (int)(Size*(float)(rng.Next(75, 125)/100f));
 
-            Bounds.Width = mazeW*spaceing;
-            Bounds.Height = mazeH*spaceing;
+            Bounds.Width = (mazeW-1)*spaceing;
+            Bounds.Height = (mazeH-1)*spaceing;
             Centre = new PointF(Bounds.Width/2, Bounds.Height/2);
 
             //i = x+y*width
@@ -152,7 +152,7 @@ namespace MazeGeneratorProject {
 
             Bounds.Width = Size * spaceing;
             Bounds.Height = (Size+1) * spaceing;
-            Centre = new PointF(Bounds.Width/2, Bounds.Height/2);
+            Centre = new PointF(0, Bounds.Height/2);
 
             int rowNumb = 0, colNumb = 0;
             for (int i = 0; i < numNodes; i++) {
@@ -172,7 +172,7 @@ namespace MazeGeneratorProject {
                     neighbours[5] = new Connection(i-rowNumb-1, false); //top-left
                 }
                 //connect neighbours in a clockwise order
-                vertices.Add(new Cell(pos, neighbours.Where(c => c.setup).ToArray()));
+                vertices.Add(new Cell(pos, neighbours.Where(c => !(c is null)).ToArray()));
 
                 colNumb++;
                 if (colNumb > rowNumb) { colNumb = 0; rowNumb++; }
