@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MazeGeneratorProject.Forms {
@@ -43,6 +37,7 @@ namespace MazeGeneratorProject.Forms {
             bttn_back.Font = StyleSheet.Body;
             bttn_GenMaze.Font = StyleSheet.Body;
 
+            //set up the options panel
             //pannel scrollbars
             pnl_Options.AutoScroll = true;
 
@@ -58,7 +53,7 @@ namespace MazeGeneratorProject.Forms {
 
             //size label
             lbl_size = new Label();
-            lbl_size.Location = new Point(5 + controllWidths + controllGaps, trkbr_size.Location.Y);
+            lbl_size.Location = new Point(5 + controllWidths + controllGaps, trkbr_size.Location.Y); //controlls are located relative to the one above or beside them
             lbl_size.Size = new Size(pnl_Options.Width - (20 + controllWidths + controllGaps), trkbr_size.Height-10);
             lbl_size.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
             lbl_size.TextAlign = ContentAlignment.MiddleLeft;
@@ -71,6 +66,7 @@ namespace MazeGeneratorProject.Forms {
             drpdwn_GenType.DropDownStyle = ComboBoxStyle.DropDownList;
             drpdwn_GenType.Items.Add("Gamma (squares)");
             drpdwn_GenType.Items.Add("Delta (triangles)");
+            drpdwn_GenType.MouseWheel += Drpdwn_MouseWheel;
             drpdwn_GenType.Size = new Size(controllWidths, drpdwn_GenType.Height);
             drpdwn_GenType.Location = new Point(5, trkbr_size.Location.Y+trkbr_size.Height+controllGaps-25);
             pnl_Options.Controls.Add(drpdwn_GenType);
@@ -93,10 +89,10 @@ namespace MazeGeneratorProject.Forms {
             drpdwn_Style.ItemHeight *= 2;
             foreach (Style s in StyleSheet.MazeStyles) { drpdwn_Style.Items.Add(s); }
             drpdwn_Style.SelectedIndex = 0;
-            drpdwn_Style.DrawMode = DrawMode.OwnerDrawVariable;
+            drpdwn_Style.DrawMode = DrawMode.OwnerDrawVariable; //enable a custom drawing method for the dropdown
             drpdwn_Style.DrawItem += Drpdwn_Style_DrawItem;
             //https://stackoverflow.com/a/1883072
-            drpdwn_Style.MouseWheel += Drpdwn_Style_MouseWheel;
+            drpdwn_Style.MouseWheel += Drpdwn_MouseWheel;
             drpdwn_Style.Location = new Point(5, drpdwn_GenType.Location.Y+ drpdwn_GenType.Size.Height+controllGaps);
             pnl_Options.Controls.Add(drpdwn_Style);
 
@@ -162,7 +158,7 @@ namespace MazeGeneratorProject.Forms {
             lbl_TitleBias.Text = "Bias strength (1/8x to 8x)";
             pnl_Options.Controls.Add(lbl_TitleBias);
 
-            //timer calculate difficulty
+            //timer calculate difficulty (a timer set up to trigger a subroutine that calculates the difficulty score every 100ms)
             tmr_calculateDifficulty = new Timer();
             tmr_calculateDifficulty.Interval = 100;
             tmr_calculateDifficulty.Tick += Tmr_calculateDifficulty_Tick;
@@ -176,27 +172,28 @@ namespace MazeGeneratorProject.Forms {
             CalculateDifficulty();
             tmr_calculateDifficulty.Enabled = true;
         }
-        private void Drpdwn_Style_MouseWheel(object sender, MouseEventArgs e) {
+        private void Drpdwn_MouseWheel(object sender, MouseEventArgs e) { //if the dropdown is scrolled on when it is not open, it should not change the setting of the dropdown
             if (!((ComboBox)sender).DroppedDown) {
                 ((HandledMouseEventArgs)e).Handled = true;
             }
         }
-        private void Drpdwn_Style_DrawItem(object sender, DrawItemEventArgs e) {
+        private void Drpdwn_Style_DrawItem(object sender, DrawItemEventArgs e) { //a custom method for the dropdown to draw it's contents
             //https://www.c-sharpcorner.com/UploadFile/renuka11/using-a-combobox-to-select-colors/
             //draw colours
-            Graphics gfx = e.Graphics;
+            Graphics gfx = e.Graphics; //construct a graphics object
             Rectangle rect = e.Bounds;
             if (e.Index >= 0) {
                 Style selected = (Style)(((ComboBox)sender).Items[e.Index]);
-                Brush b1 = selected.WallBrush;
-                Brush b2 = selected.PassageBrush;
+                Brush wallBrush = selected.WallBrush;
+                Brush passageBrush = selected.PassageBrush;
+                //fill the area half with the passage brush, half with the wall brush
                 gfx.FillRectangle(SystemBrushes.ControlDark, rect);
-                gfx.FillRectangle(b1, rect.X+1, rect.Y+1, rect.Width/2, rect.Height-2);
-                gfx.FillRectangle(b2, rect.X+rect.Width/2, rect.Y+1, rect.Width/2-1, rect.Height-2);
+                gfx.FillRectangle(wallBrush, rect.X+1, rect.Y+1, rect.Width/2, rect.Height-2);
+                gfx.FillRectangle(passageBrush, rect.X+rect.Width/2, rect.Y+1, rect.Width/2-1, rect.Height-2);
             }
         }
         private void Bttn_back_Click(object sender, EventArgs e) {
-            Program.AppWindow.SetActiveForm(new MainMenu(user));
+            Program.AppWindow.SetActiveForm(new MainMenu(user)); //return the user to the main menu
         }
 
         private void CalculateDifficulty() {
@@ -207,13 +204,12 @@ namespace MazeGeneratorProject.Forms {
             if (chbx_ReducedVisability.Checked) { difficultyPoints += 1; }
             if (chbx_Keys.Checked) { difficultyPoints += 1; }
 
-            //difficultyPoints += trkbr_size.Value/3;
-            if (trkbr_size.Value < 4) {
+            if (trkbr_size.Value < 4) { //small maze
                 difficultyPoints += 2;
-            } else if (trkbr_size.Value < 7) {
+            } else if (trkbr_size.Value < 7) { //medium maze
                 difficultyPoints += 5;
             } else {
-                difficultyPoints += 7;
+                difficultyPoints += 7; //big maze
             }
 
             lbl_diff.Text = "This maze is ";
@@ -224,7 +220,7 @@ namespace MazeGeneratorProject.Forms {
 
         }
 
-        private void bttn_GenMaze_Click(object sender, EventArgs e) {
+        private void bttn_GenMaze_Click(object sender, EventArgs e) { //send the options and user to the maze form, where the maze will be generated
             GeneratorOptions options = new GeneratorOptions();
             options.Appearance = (Style)drpdwn_Style.SelectedItem;
             options.GenerationType = (GeneratorOptions._GenerationType)drpdwn_GenType.SelectedIndex;

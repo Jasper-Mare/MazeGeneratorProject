@@ -6,7 +6,6 @@ namespace MazeGeneratorProject {
     static class StyleSheet {
         public static readonly Font Headings = new Font("Gill Sans MT", 35);
         public static readonly Font Body = new Font(FontFamily.GenericSansSerif, 12);
-        //public static readonly Bitmap Backgroundimage = ;
 
         public static readonly Style[] MazeStyles = {
             //        walls          passages       passage width

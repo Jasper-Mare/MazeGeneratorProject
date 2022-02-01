@@ -87,9 +87,9 @@ namespace MazeGeneratorProject.Forms
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.bttn_Start.Font = new System.Drawing.Font("Showcard Gothic", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.bttn_Start.Location = new System.Drawing.Point(24, 73);
+            this.bttn_Start.Location = new System.Drawing.Point(224, 373);
             this.bttn_Start.Name = "bttn_Start";
-            this.bttn_Start.Size = new System.Drawing.Size(751, 761);
+            this.bttn_Start.Size = new System.Drawing.Size(351, 161);
             this.bttn_Start.TabIndex = 7;
             this.bttn_Start.Text = "Start";
             this.bttn_Start.UseVisualStyleBackColor = true;
@@ -174,9 +174,9 @@ namespace MazeGeneratorProject.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 858);
             this.Controls.Add(this.bttn_pause);
-            this.Controls.Add(this.pnl_pausedMenu);
             this.Controls.Add(this.lbl_Username);
             this.Controls.Add(this.lbl_timer);
+            this.Controls.Add(this.pnl_pausedMenu);
             this.Controls.Add(this.bttn_Start);
             this.Controls.Add(this.Canvas);
             this.Name = "MazeForm";

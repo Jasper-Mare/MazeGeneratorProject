@@ -36,7 +36,6 @@
             this.Name = "ApplicationWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Maze Generator Program";
-            this.Activated += new System.EventHandler(this.ApplicationWindow_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ApplicationWindow_FormClosing);
             this.Load += new System.EventHandler(this.ApplicationWindow_Load);
             this.Shown += new System.EventHandler(this.ApplicationWindow_Shown);

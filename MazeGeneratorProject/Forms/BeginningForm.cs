@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace MazeGeneratorProject.Forms {
@@ -7,9 +8,13 @@ namespace MazeGeneratorProject.Forms {
             InitializeComponent();
             bttn_Start.Font = StyleSheet.Headings;
         }
+        private void BeginningForm_Load(object sender, EventArgs e) {
+            pbxImg.Image = Image.FromFile(@"Database/maze.png");
+        }
 
         private void bttn_Start_Click(object sender, EventArgs e) {
-            Program.AppWindow.SetActiveForm(new LoginScreen());
+            Program.AppWindow.SetActiveForm(new LoginScreen()); //change to the login form
         }
+
     }
 }

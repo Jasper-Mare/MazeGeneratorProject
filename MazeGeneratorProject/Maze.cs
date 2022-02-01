@@ -14,6 +14,8 @@ namespace MazeGeneratorProject {
         //==generate==generate==generate==generate==
         public void Generate(GeneratorOptions options) {
             Random rng = new Random();
+            
+            //generate the mesh of the maze based on what shape it is
             switch (options.GenerationType) {
                 case GeneratorOptions._GenerationType.Gamma:
                     Cells = createGammaMesh(options.Size, options.Appearance.PassageW*2);
@@ -22,15 +24,19 @@ namespace MazeGeneratorProject {
                     Cells = createDeltaMesh(options.Size, options.Appearance.PassageW*2);
                     break;
                 default:
-                    return;
+                    return; //if the maze is another shape (which should never happen) leave the generate function
             }
+
             //this uses Kruskal's Algorithm with random weights to generate the maze
+
+            //place every cell in a group of it's own
             List<List<int>> groups = new List<List<int>>();
             for (int i = 0; i < Cells.Length; i++) {
                 groups.Add(new List<int>());
                 groups[i].Add(i);
             }
 
+            //merge the groups
             while (groups.Count > 1) {
                 //pick a group
                 //pick a cell
@@ -71,8 +77,7 @@ namespace MazeGeneratorProject {
                         }
                     }
 
-
-                    if (cell1HasValidNeighbour) { break; } //there will be a cell with a neighbour that isn't part of it's group
+                    if (cell1HasValidNeighbour) { break; } //in a group there will be a cell with a neighbour that isn't part of its group
                 }
 
                 //if from different groups, merge the groups and add a connection
@@ -97,11 +102,12 @@ namespace MazeGeneratorProject {
                 groups.RemoveAt(group2Index); //remove group2
             }
 
+            //if keys are enabled scatter them across the maze
             if (options.Keys) {
-                Keys = new int[options.Size/10];
+                Keys = new int[options.Size/10]; //number of keys are 1/10 of the maze's size
                 for (int i = 0; i < Keys.Length; i++) {
                     int val = rng.Next(0, Cells.Length);
-                    while (Keys.Contains(val) || val == StartCell || val == EndCell) {
+                    while (Keys.Contains(val) || val == StartCell || val == EndCell) { //keep generating key indexes so they can't appear on the start, exit, or two on one spot
                         val = rng.Next(0, Cells.Length);
                     }
                     Keys[i] = val;
@@ -194,6 +200,7 @@ namespace MazeGeneratorProject {
             return vertices.ToArray();
         }
         
+        //the code for generating the now removed theta maze shape (commented out so it isn't included in the compiled execuitable)
         /*
         private Cell[] createThetaMesh(int Size, float spaceing) { //circle
             List<Cell> vertices = new List<Cell>();
@@ -258,46 +265,47 @@ namespace MazeGeneratorProject {
         public int[] Solve(int destIndex, int startIndex) {
             List<Path> Paths = new List<Path>();
 
+            //ensure the requested positions are in the maze
             if (destIndex < 0 || destIndex > Cells.Length-1 || startIndex < 0 || startIndex > Cells.Length-1) { throw new Exception("Start/end cell is outside of maze."); }
 
             Paths.Add(new Path());
             Paths[0].Add(startIndex);
 
-            int loops = 0;
-            while (Paths.Count > 0) {
+            while (Paths.Count > 0) { //while there are paths in the maze
+                //I did this because if I try to edit the list of paths during the foreach it causes problems
                 List<Path> pathsToAdd = new List<Path>();
                 List<Path> pathsToRemove = new List<Path>();
-                foreach (Path p in Paths.ToList()) { //https://stackoverflow.com/a/604843
+                foreach (Path p in Paths) { //https://stackoverflow.com/a/604843
 
-                    if (p.Contains(destIndex)) { return p.ToArray(); }
+                    if (p.Contains(destIndex)) { return p.ToArray(); } //return the path that leads to the final destination
 
+                    //get a collection of the directions the path can go now
                     int lastCell = (p.Count >= 2)? p[p.Count-2] : -1;
                     Connection[] nextConnections = Cells[p[p.Count - 1]].NeighboursConnected.Where(n => n.NeighbourIndex != lastCell).ToArray();
 
-                    if (nextConnections.Length == 0) {
+                    if (nextConnections.Length == 0) { //if it is at a dead end it gets destroyed
                         pathsToRemove.Add(p);
-                    } else if (nextConnections.Length == 1) {
+                    } else if (nextConnections.Length == 1) { //if it is in a passage it continues to the next position
                         p.Add(nextConnections[0].NeighbourIndex);
-                    } else { 
-                        for (int i = 0; i < nextConnections.Length-1; i++) {
+                    } else { //if it is at a junction it splits into multiple paths and each explores a different direction
+                        for (int i = 0; i < nextConnections.Length-1; i++) { //create new ones
                             Path newPassage = new Path(p.ToList());
                             newPassage.Add(nextConnections[i].NeighbourIndex);
                             pathsToAdd.Add(newPassage);
                         }
-                        p.Add(nextConnections[nextConnections.Length-1].NeighbourIndex);
+                        p.Add(nextConnections[nextConnections.Length-1].NeighbourIndex); //extend the current one down the last direction
                     }
 
                 }
 
-                foreach (Path p in pathsToRemove) {
+                foreach (Path p in pathsToRemove) { //remove the paths that hit a dead end in this iteration of the loop
                     Paths.Remove(p);
                 }
-                Paths.AddRange(pathsToAdd);
-                loops++;
+                Paths.AddRange(pathsToAdd); //add the new paths created in this iteration of the loop
             }
-            throw new Exception("route not found");
+            throw new Exception("route not found"); //if it gets here all the paths have reached dead ends and been destroyed
         }
-        private class Path : List<int> {
+        private class Path : List<int> { //a class used only in the 'solve' function because I think List<Path> is more readable than List<List<int>>
             public Path() : base() { }
             public Path(List<int> list) { base.AddRange(list); }
         }
