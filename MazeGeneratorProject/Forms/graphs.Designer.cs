@@ -32,6 +32,8 @@ namespace MazeGeneratorProject.Forms
             this.tbctl_Graphs = new System.Windows.Forms.TabControl();
             this.bttn_back = new System.Windows.Forms.Button();
             this.lbl_title = new System.Windows.Forms.Label();
+            this.lbl_time = new System.Windows.Forms.Label();
+            this.lbl_attempt = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // tbctl_Graphs
@@ -39,10 +41,10 @@ namespace MazeGeneratorProject.Forms
             this.tbctl_Graphs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbctl_Graphs.Location = new System.Drawing.Point(12, 80);
+            this.tbctl_Graphs.Location = new System.Drawing.Point(80, 80);
             this.tbctl_Graphs.Name = "tbctl_Graphs";
             this.tbctl_Graphs.SelectedIndex = 0;
-            this.tbctl_Graphs.Size = new System.Drawing.Size(596, 318);
+            this.tbctl_Graphs.Size = new System.Drawing.Size(528, 298);
             this.tbctl_Graphs.TabIndex = 3;
             this.tbctl_Graphs.Selected += new System.Windows.Forms.TabControlEventHandler(this.tbctl_Graphs_Selected);
             // 
@@ -71,11 +73,37 @@ namespace MazeGeneratorProject.Forms
             this.lbl_title.Text = "Graphs of Time Taken";
             this.lbl_title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // lbl_time
+            // 
+            this.lbl_time.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.lbl_time.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_time.Location = new System.Drawing.Point(12, 84);
+            this.lbl_time.Name = "lbl_time";
+            this.lbl_time.Size = new System.Drawing.Size(62, 294);
+            this.lbl_time.TabIndex = 7;
+            this.lbl_time.Text = "Time Taken to Solve (seconds)";
+            this.lbl_time.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lbl_attempt
+            // 
+            this.lbl_attempt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbl_attempt.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lbl_attempt.Location = new System.Drawing.Point(80, 381);
+            this.lbl_attempt.Name = "lbl_attempt";
+            this.lbl_attempt.Size = new System.Drawing.Size(528, 20);
+            this.lbl_attempt.TabIndex = 8;
+            this.lbl_attempt.Text = "Attempt Number";
+            this.lbl_attempt.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Graphs
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(620, 450);
+            this.Controls.Add(this.lbl_attempt);
+            this.Controls.Add(this.lbl_time);
             this.Controls.Add(this.lbl_title);
             this.Controls.Add(this.bttn_back);
             this.Controls.Add(this.tbctl_Graphs);
@@ -91,5 +119,7 @@ namespace MazeGeneratorProject.Forms
         private System.Windows.Forms.TabControl tbctl_Graphs;
         private System.Windows.Forms.Button bttn_back;
         private System.Windows.Forms.Label lbl_title;
+        private System.Windows.Forms.Label lbl_time;
+        private System.Windows.Forms.Label lbl_attempt;
     }
 }

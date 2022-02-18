@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -102,9 +103,13 @@ namespace MazeGeneratorProject.Forms {
             listening = -1; //re-set listening
         }
 
-
         private void bttn_done_Click(object sender,EventArgs e) {
-            Close(); //close the form
+            Keys[] keys = new Keys[4] { user.KeyUp, user.KeyDown, user.KeyLeft, user.KeyRight };
+            if (keys.Distinct().Count() != 4) {
+                MessageBox.Show("The same key can't be assigned to multiple actions!");
+            } else { 
+                Close(); //close the form
+            }
         }
     }
 }

@@ -50,7 +50,7 @@ namespace MazeGeneratorProject.Forms {
             } else {
                 List<float> values = user.Times[timesDiff].ToList(); //the list of the times being drawn out
 
-                if(values.Count == 1) { values.Add(values[0]); } //if there is only one, coppy it so a flat line is drawn
+                if(values.Count == 1) { values.Add(values[0]); } //if there is only one, copy it so a flat line is drawn
 
                 //x and y scaleing factors
                 float ySfact = (h-100)/values.Max();
@@ -60,13 +60,17 @@ namespace MazeGeneratorProject.Forms {
                     gfx.DrawString((y/ySfact).ToString("F2"),StyleSheet.Body,Brushes.Black,10,h-y-60);
                     gfx.DrawLine(SystemPens.ControlLight,100,h-y-50,w-50,h-y-50);
                 }
+                
                 //draw the line of the graph
                 int y1 = h-(int)(values[0]*ySfact)-50;
                 for(int x = 1; x < values.Count; x++) {
                     int y2 = h-(int)(values[x]*ySfact)-50;
                     gfx.DrawLine(linePen,(x-1)*xSfact+100,y1,x*xSfact+100,y2);
                     y1 = y2;
+                    //write x axis values
+                    gfx.DrawString(x.ToString(),StyleSheet.Body,Brushes.Black,(x-1)*xSfact+100, h-40);
                 }
+                gfx.DrawString(values.Count.ToString(),StyleSheet.Body,Brushes.Black,(values.Count- 1)*xSfact+100, h-40);
             }
 
             //draw the axes

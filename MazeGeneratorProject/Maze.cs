@@ -58,11 +58,11 @@ namespace MazeGeneratorProject {
                     int checkoffset;
                     if (options.BiasStrength != 1) {
                         if (options.BiasStrength < 1) { //biased early
-                            if (rng.Next(0, (int)(1 / options.BiasStrength)) == 0) { checkoffset = 0; }
+                            if (rng.Next(0, (int)(1/options.BiasStrength)) == 0) { checkoffset = 0; }
                             else { checkoffset = cell1TMP.Neighbours.Length/2; }
                         } else { //biased late
-                            if (rng.Next(0, (int)(options.BiasStrength)) == 0) { checkoffset = cell1TMP.Neighbours.Length/2; }
-                            else { checkoffset = 0; }
+                            if (rng.Next(0, (int)(options.BiasStrength)) == 0) {  checkoffset = 0;  }
+                            else { checkoffset = cell1TMP.Neighbours.Length/2+1; }
                         }
                     } else {
                         checkoffset = rng.Next(cell1TMP.Neighbours.Length);
